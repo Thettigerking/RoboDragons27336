@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "RoboDragonsnew2025")
-public class RoboDragonsTeleOpMech extends LinearOpMode {
+public class RoboDragonsTeleOpMechTest extends LinearOpMode {
     private DcMotor LeftFront;
     private DcMotor LeftBack;
 
