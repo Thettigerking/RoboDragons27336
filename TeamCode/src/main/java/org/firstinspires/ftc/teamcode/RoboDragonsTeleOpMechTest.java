@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByEncoder_Linear.DRIVE_SPEED;
 import static java.sql.DriverManager.println;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,7 +17,6 @@ public class RoboDragonsTeleOpMechTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         //
         LeftFront = hardwareMap.get(DcMotor.class, "LeftFront");
         LeftBack = hardwareMap.get(DcMotor.class, "LeftBack");
@@ -30,62 +30,26 @@ public class RoboDragonsTeleOpMechTest extends LinearOpMode {
 
         // Put initialization blocks here.
         waitForStart();
+        while (opModeIsActive()) {
 
-        if (opModeIsActive()) {
-            // Put run blocks here.
-            while (opModeIsActive()) {
+            double leftX;
+            double leftY;
+            double rightX;
 
-                if (gamepad1.left_stick_y != 0){
-                    drive();
-                }
+            // Strafer Mode
+            leftX = gamepad1.left_stick_x * DRIVE_SPEED;
+            leftY = gamepad1.left_stick_y * DRIVE_SPEED;
+            rightX = gamepad1.right_stick_x * DRIVE_SPEED;
 
-                if (gamepad1.left_stick_x != 0){
-                    turn();
-                }
+            double leftRearPower = leftY + leftX - rightX;
+            double leftFrontPower = leftY - leftX - rightX;
+            double rightRearPower = leftY - leftX + rightX;
+            double rightFrontPower = leftY + leftX + rightX;
 
-                if (gamepad1.right_bumper) {
-                    strafeLeft();
-                }
-
-                if (gamepad1.left_bumper) {
-                    strafeRight();
-                }
-                if (!gamepad1.right_bumper && !gamepad1.left_bumper && gamepad1.left_stick_x == 0) {
-                    LeftFront.setPower(0);
-                    RightBack.setPower(0);
-                    RightFront.setPower(0);
-                    LeftBack.setPower(0);
-                }
-            }
+            LeftFront.setPower(leftFrontPower);
+            LeftBack.setPower(leftRearPower);
+            RightFront.setPower(rightFrontPower);
+            RightBack.setPower(rightRearPower);
         }
     }
-
-    private void strafeLeft() {
-        LeftFront.setPower(-1);
-        RightBack.setPower(-1);
-        RightFront.setPower(1);
-        LeftBack.setPower(1);
-    }
-
-    private void strafeRight() {
-        LeftFront.setPower(1);
-        RightBack.setPower(1);
-        RightFront.setPower(-1);
-        LeftBack.setPower(-1);
-    }
-
-    private void turn() {
-        LeftFront.setPower(-(gamepad1.left_stick_x));
-        RightBack.setPower((gamepad1.left_stick_x));
-        RightFront.setPower((gamepad1.left_stick_x));
-        LeftBack.setPower(-(gamepad1.left_stick_x));
-    }
-
-    private void drive() {
-        LeftFront.setPower(gamepad1.left_stick_y);
-        RightBack.setPower(gamepad1.left_stick_y);
-        RightFront.setPower(gamepad1.left_stick_y);
-        LeftBack.setPower(gamepad1.left_stick_y);
-    }
-
 }
