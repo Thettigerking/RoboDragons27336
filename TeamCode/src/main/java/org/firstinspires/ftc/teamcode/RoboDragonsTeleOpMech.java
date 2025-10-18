@@ -5,6 +5,7 @@ import static java.sql.DriverManager.println;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "RoboDragonsnew2025")
 public class RoboDragonsTeleOpMech extends LinearOpMode {
@@ -12,7 +13,10 @@ public class RoboDragonsTeleOpMech extends LinearOpMode {
     private DcMotor LeftBack;
 
     private DcMotor RightFront;
+
     private DcMotor RightBack;
+
+    private Servo TiltControl;
 
     @Override
     public void runOpMode() {
@@ -22,10 +26,12 @@ public class RoboDragonsTeleOpMech extends LinearOpMode {
         LeftBack = hardwareMap.get(DcMotor.class, "LeftBack");
         RightFront = hardwareMap.get(DcMotor.class, "RightFront");
         RightBack = hardwareMap.get(DcMotor.class, "RightBack");
+        TiltControl = hardwareMap.get(Servo.class, "TiltControl");
 
-        LeftBack.setDirection(DcMotor.Direction.REVERSE);
+    /*    LeftBack.setDirection(DcMotor.Direction.REVERSE);
         RightBack.setDirection(DcMotor.Direction.REVERSE);
-        RightFront.setDirection(DcMotor.Direction.REVERSE);
+        RightFront.setDirection(DcMotor.Direction.REVERSE);*/
+
 
 
         // Put initialization blocks here.
@@ -34,58 +40,28 @@ public class RoboDragonsTeleOpMech extends LinearOpMode {
         if (opModeIsActive()) {
             // Put run blocks here.
             while (opModeIsActive()) {
+                double leftX;
+                double leftY;
+                double rightX;
 
-                if (gamepad1.left_stick_y != 0){
-                    drive();
-                }
+                leftX = gamepad1.left_stick_x;
+                rightX = -gamepad1.left_stick_y;
+                leftY = -gamepad1.right_stick_x;
 
-                if (gamepad1.left_stick_x != 0){
-                    turn();
-                }
+                double leftRearPower = leftY + leftX - rightX;
+                double leftFrontPower = leftY - leftX - rightX;
+                double rightRearPower = leftY + leftX + rightX;
+                double rightFrontPower = leftY - leftX + rightX;
 
-                if (gamepad1.right_bumper) {
-                    strafeLeft();
-                }
+                LeftFront.setPower(leftFrontPower);
+                LeftBack.setPower(leftRearPower);
+                RightFront.setPower(rightFrontPower);
+                RightBack.setPower(rightRearPower);
 
-                if (gamepad1.left_bumper) {
-                    strafeRight();
-                }
-                if (!gamepad1.right_bumper && !gamepad1.left_bumper && gamepad1.left_stick_x == 0) {
-                    LeftFront.setPower(0);
-                    RightBack.setPower(0);
-                    RightFront.setPower(0);
-                    LeftBack.setPower(0);
-                }
+                double stickValue = -gamepad2.left_stick_y;
+                double mapped = (stickValue + 1) / 2;
+                TiltControl.setPosition(mapped);
             }
         }
     }
-
-    private void strafeLeft() {
-        LeftFront.setPower(-1);
-        RightBack.setPower(-1);
-        RightFront.setPower(1);
-        LeftBack.setPower(1);
-    }
-
-    private void strafeRight() {
-        LeftFront.setPower(1);
-        RightBack.setPower(1);
-        RightFront.setPower(-1);
-        LeftBack.setPower(-1);
-    }
-
-    private void turn() {
-        LeftFront.setPower(-(gamepad1.left_stick_x));
-        RightBack.setPower((gamepad1.left_stick_x));
-        RightFront.setPower((gamepad1.left_stick_x));
-        LeftBack.setPower(-(gamepad1.left_stick_x));
-    }
-
-    private void drive() {
-        LeftFront.setPower(gamepad1.left_stick_y);
-        RightBack.setPower(gamepad1.left_stick_y);
-        RightFront.setPower(gamepad1.left_stick_y);
-        LeftBack.setPower(gamepad1.left_stick_y);
-    }
-
 }
