@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "RoboDragonsMechTest2025TurnTest")
+@TeleOp(name = "Flywheel")
 public class RoboDragonsTeleOpMechTest extends LinearOpMode {
     private DcMotor LeftFront;
     private DcMotor LeftBack;
@@ -32,9 +32,9 @@ public class RoboDragonsTeleOpMechTest extends LinearOpMode {
 /*        Outtake1 = hardwareMap.get(DcMotor.class, "Outtake1");
         Outtake2 = hardwareMap.get(DcMotor.class, "Outtake2");*/
 
-        LeftBack.setDirection(DcMotor.Direction.REVERSE);
+/*        LeftBack.setDirection(DcMotor.Direction.REVERSE);
         RightBack.setDirection(DcMotor.Direction.REVERSE);
-        RightFront.setDirection(DcMotor.Direction.REVERSE);
+        RightFront.setDirection(DcMotor.Direction.REVERSE);*/
         TiltControl.setPosition(0);
         boolean lastA = false;
         boolean lastY = false;
@@ -42,7 +42,7 @@ public class RoboDragonsTeleOpMechTest extends LinearOpMode {
         // Put initialization blocks here.
         waitForStart();
         while (opModeIsActive()) {
-            double leftX;
+        /*    double leftX;
             double leftY;
             double rightX;
 
@@ -52,15 +52,15 @@ public class RoboDragonsTeleOpMechTest extends LinearOpMode {
 
             double leftRearPower = leftY + leftX - rightX;
             double leftFrontPower = leftY - leftX - rightX;
-            double rightRearPower = leftY + leftX - rightX;
-            double rightFrontPower = leftY - leftX - rightX;
+            double rightRearPower = -leftY + leftX - rightX;
+            double rightFrontPower = -leftY - leftX - rightX;
 
             LeftFront.setPower(leftFrontPower);
             LeftBack.setPower(leftRearPower);
             RightFront.setPower(rightFrontPower);
-            RightBack.setPower(rightRearPower);
+            RightBack.setPower(rightRearPower);*/
 
-            double outtakePower = gamepad2.right_stick_y * 5/6;
+            double outtakePower = gamepad2.right_stick_y * 3/4;
             LeftFront.setPower(outtakePower);
             LeftBack.setPower(outtakePower);
 
