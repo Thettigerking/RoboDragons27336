@@ -88,9 +88,9 @@ public class RoboDragonsTeleOpMech extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                 } else if (gamepad2.y) {
-                    Intake.setPower(-1);
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
+                    Intake.setPower(1);
+                    BottomRampServo.setPower(1);
+                    BottomRampServo2.setPower(1);
                 } else {
                     Intake.setPower(0);
                     BottomRampServo.setPower(0);

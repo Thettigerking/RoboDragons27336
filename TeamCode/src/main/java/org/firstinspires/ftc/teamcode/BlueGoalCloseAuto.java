@@ -19,7 +19,7 @@ public class BlueGoalCloseAuto extends LinearOpMode {
 
         waitForStart();
 
-        if (opModeIsActive()) {
+        while (opModeIsActive()) {
             Action actionName = drive.actionBuilder(startPose)
                     .strafeToLinearHeading(new Vector2d(-34, -34), Math.toRadians(0))
                     .turnTo(Math.toRadians(45))
