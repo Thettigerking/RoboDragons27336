@@ -6,21 +6,24 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @TeleOp(name = "RoboDragonsnew2025_Optimized")
 public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
 
     // --- Hardware ---
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotor Intake;
-    private CRServo BottomRampServo, BottomRampServo2, helperservo;
+    private CRServo BottomRampServo, BottomRampServo2, helperservo, helperservo2;
     private Servo Pusher, Pusher2, TiltControl;
     private DcMotor RightOuttake, LeftOuttake;
 
     // --- Constants / Tuning (easy to change) ---
     private static boolean pushervar = false;
     //0.2, 0.3
-    private static final double[] TILT_POSITIONS = {0.82, 0.65, 0.9};
-    private static final double[] OUTTAKE_POWERS = {-0.5, -0.45, -0.75};
+    private static final double[] TILT_POSITIONS = {0.82, 0.65, 0.6};
+    private static final double[] OUTTAKE_POWERS = {-0.55, -0.45, -0.35};
     private static final double PUSHER_OPEN = 0.85;
     private static final double PUSHER_HALF = 0.5;
     private static final double PUSHER_CLOSE = 0.45;
@@ -30,7 +33,8 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     private static final double DEFAULT_DRIVE_SCALE = 1.0;
     // --- Debounce / toggle helpers ---
     private boolean prevRightBumper = false;
-    private int tiltIndex = 0;
+    String shooter = "";
+     private int tiltIndex = 0;
 
     @Override
     public void runOpMode() {
@@ -45,6 +49,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
         BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
         BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
         helperservo = hardwareMap.get(CRServo.class, "helperservo");
+        helperservo2 = hardwareMap.get(CRServo.class, "helperservo2");
 
         Pusher  = hardwareMap.get(Servo.class, "Pusher");
         Pusher2 = hardwareMap.get(Servo.class, "Pusher2");
@@ -116,17 +121,20 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
                 helperservo.setPower(RAMP_POWER);
+                helperservo2.setPower(RAMP_POWER);
             } else if (gamepad2.y) {
                 // example: alternate mode - change as needed
                 Intake.setPower(0.6);
                 BottomRampServo.setPower(0.6);
                 BottomRampServo2.setPower(0.6);
                 helperservo.setPower(0.6);
+                helperservo2.setPower(0.6);
             } else {
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
                 helperservo.setPower(0);
+                helperservo2.setPower(0);
             }
             if (gamepad2.right_bumper) {
                 if (pushervar) {
@@ -160,6 +168,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
 
             }
 
+
             prevRightBumper = rbb;  // update state
             if (gamepad2.dpad_down) {
                 RightOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
@@ -168,11 +177,21 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
                 RightOuttake.setPower(0);
                 LeftOuttake.setPower(0);
             }
+            if (tiltIndex == 0) {
+                shooter = "Far";
+            } else if (tiltIndex == 1) {
+                shooter = "Middle";
+            } else if (tiltIndex == 2) {
+                shooter = "Close";
+            } else {
+                shooter = "FTC robot controller has corrupted! Disk: Failed. How did we get here?";
+            }
 
             // ----- Telemetry (minimal but helpful) -----
             telemetry.addData("TiltIndex", tiltIndex);
             telemetry.addData("TiltPos", TiltControl.getPosition());
             telemetry.addData("DriveScale", driveScale);
+            telemetry.addData("Shooter range:",shooter);
             telemetry.update();
         }
 
