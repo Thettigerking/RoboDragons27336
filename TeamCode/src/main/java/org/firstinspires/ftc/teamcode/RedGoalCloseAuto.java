@@ -28,9 +28,9 @@ import dev.nextftc.hardware.powerable.SetPower;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 // you can then access the follower as follower()
-@Autonomous(name = "BlueGoalCloseAuto", group = "Autonomous")
+@Autonomous(name = "RedGoalCloseAuto", group = "Autonomous")
 @Configurable // Panels
-public class BlueGoalCloseAuto extends OpMode {
+public class RedGoalCloseAuto extends OpMode {
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helperservo, helperservo2;
     private Servo Pusher, Pusher2, TiltControl;
@@ -52,7 +52,7 @@ public class BlueGoalCloseAuto extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(33.5, 135.5, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(110.5, 135.5, Math.toRadians(90)));
 
         paths = new Paths(follower); // Build paths
 
@@ -113,17 +113,17 @@ public class BlueGoalCloseAuto extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(34.000, 135.500), new Pose(59.000, 97.000))
+                            new BezierLine(new Pose(110.000, 135.500), new Pose(85.000, 97.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(325))
+                    .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(230))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(59.000, 97.000), new Pose(58.000, 97.000))
+                            new BezierLine(new Pose(85.000, 97.000), new Pose(86.000, 97.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(360))
                     .build();
 
             new FollowPath(Path2, true, 0.5);
@@ -131,65 +131,65 @@ public class BlueGoalCloseAuto extends OpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(42.000, 97.000), new Pose(21.000, 97.000))
+                            new BezierLine(new Pose(102.000, 97.000), new Pose(123.000, 97.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(360))
                     .build();
 
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(21.000, 97.000), new Pose(72.000, 72.000))
+                            new BezierLine(new Pose(123.000, 97.000), new Pose(72.000, 72.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(215))
                     .build();
 
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(72.000, 72.000), new Pose(42.000, 60.000))
+                            new BezierLine(new Pose(72.000, 72.000), new Pose(102.000, 60.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(215), Math.toRadians(360))
                     .build();
 
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(42.000, 60.000), new Pose(21.000, 60.000))
+                            new BezierLine(new Pose(102.000, 60.000), new Pose(123.000, 60.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(360))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(21.000, 60.000), new Pose(72.000, 72.000))
+                            new BezierLine(new Pose(123.000, 60.000), new Pose(72.000, 72.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(215))
                     .build();
 
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(72.000, 72.000), new Pose(42.000, 35.500))
+                            new BezierLine(new Pose(72.000, 72.000), new Pose(102.000, 35.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(215), Math.toRadians(360))
                     .build();
 
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(42.000, 35.500), new Pose(21.000, 35.500))
+                            new BezierLine(new Pose(102.000, 35.500), new Pose(123.000, 35.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(360))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(21.000, 35.500), new Pose(72.000, 72.000))
+                            new BezierLine(new Pose(123.000, 35.500), new Pose(72.000, 72.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
+                    .setLinearHeadingInterpolation(Math.toRadians(360), Math.toRadians(215))
                     .build();
 
             Path11 = follower
@@ -197,7 +197,7 @@ public class BlueGoalCloseAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(72.000, 72.000), new Pose(105.000, 33.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(215), Math.toRadians(180))
                     .build();
         }
     }
@@ -209,57 +209,59 @@ public class BlueGoalCloseAuto extends OpMode {
             switch (pathState) {
 
                 case 0:
-                    TiltControl.setPosition(0.325);
+                    TiltControl.setPosition(0.4);
                     Pusher.setPosition(0.85);
                     follower.followPath(paths.Path1);
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helperservo.setPower(-1);
                     helperservo2.setPower(-1);
-                    RightOuttake.setPower(-0.46);
-                    LeftOuttake.setPower(-0.46);
+                    RightOuttake.setPower(-0.53);
+                    LeftOuttake.setPower(-0.53);
                     pathState++;
                     break;
 
                 case 1:
                     follower.followPath(paths.Path2);
                     Intake.setPower(INTAKE_POWERING);
-                    RightOuttake.setPower(-0.43);
-                    LeftOuttake.setPower(-0.43);
-
+                    RightOuttake.setPower(-0.50);
+                    LeftOuttake.setPower(-0.50);
+                    TiltControl.setPosition(0.4);
                     Pusher.setPosition(0.5);
                     try {
-                        Thread.sleep(750);
+                        Thread.sleep(1750);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
+                    TiltControl.setPosition(0.4);
+                    Pusher.setPosition(0.85);
+                    try {
+                        Thread.sleep(2250);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
+                    TiltControl.setPosition(0.4);
+                    Pusher.setPosition(0.5);
+                    try {
+                        Thread.sleep(2250);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
                     Pusher.setPosition(0.85);
                     try {
-                        Thread.sleep(1250);
+                        Thread.sleep(2750);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
                     Pusher.setPosition(0.5);
                     try {
-                        Thread.sleep(1250);
+                        Thread.sleep(2250);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
                     Pusher.setPosition(0.85);
                     try {
-                        Thread.sleep(1250);
-                    } catch(InterruptedException e) {
-                        telemetry.addData("Warning","Sleeping interrupted:");
-                    }
-                    Pusher.setPosition(0.5);
-                    try {
-                        Thread.sleep(1250);
-                    } catch(InterruptedException e) {
-                        telemetry.addData("Warning","Sleeping interrupted:");
-                    }
-                    Pusher.setPosition(0.85);
-                    try {
-                        Thread.sleep(1250);
+                        Thread.sleep(2250);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
