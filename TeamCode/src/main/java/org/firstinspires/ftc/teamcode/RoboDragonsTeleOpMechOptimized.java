@@ -24,8 +24,8 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     //0.2, 0.3
     private static final double[] TILT_POSITIONS = {0.4, 0.25, 0.2};
     private static final double[] OUTTAKE_POWERS = {-0.55, -0.45, -0.35};
-    private static final double PUSHER_OPEN = 0.85;
-    private static final double PUSHER_HALF = 0.5;
+    private static final double PUSHER_OPEN = 0.65;
+    private static final double PUSHER_HALF = 0.55;
     private static final double PUSHER_CLOSE = 0.45;
     private static final double INTAKE_POWER = -1.0;
     private static final double RAMP_POWER = -1.0;
