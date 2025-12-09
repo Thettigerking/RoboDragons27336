@@ -22,8 +22,8 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     // --- Constants / Tuning (easy to change) ---
     private static boolean pushervar = false;
     //0.2, 0.3
-    private static final double[] TILT_POSITIONS = {0.36, 0.25, 0.2};
-    private static final double[] OUTTAKE_POWERS = {-0.53, -0.45, -0.35};
+    private static final double[] TILT_POSITIONS = {0.4, 0.25, 0.2};
+    private static final double[] OUTTAKE_POWERS = {-0.55, -0.45, -0.35};
     private static final double PUSHER_OPEN = 0.85;
     private static final double PUSHER_HALF = 0.5;
     private static final double PUSHER_CLOSE = 0.45;
@@ -173,6 +173,10 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
             if (gamepad2.dpad_down) {
                 RightOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
                 LeftOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
+
+            } else if (gamepad2.dpad_up) {
+              RightOuttake.setPower(1);
+                LeftOuttake.setPower(1);
             } else {
                 RightOuttake.setPower(0);
                 LeftOuttake.setPower(0);

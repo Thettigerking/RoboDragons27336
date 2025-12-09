@@ -115,7 +115,7 @@ public class RedGoalCloseAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(110.000, 135.500), new Pose(85.000, 97.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(230))
+                    .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(226))
                     .build();
 
             Path2 = follower
@@ -123,7 +123,7 @@ public class RedGoalCloseAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(85.000, 97.000), new Pose(86.000, 97.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(360))
+                    .setLinearHeadingInterpolation(Math.toRadians(226), Math.toRadians(360))
                     .build();
 
             new FollowPath(Path2, true, 0.5);
@@ -216,16 +216,16 @@ public class RedGoalCloseAuto extends OpMode {
                     BottomRampServo2.setPower(-1);
                     helperservo.setPower(-1);
                     helperservo2.setPower(-1);
-                    RightOuttake.setPower(-0.53);
-                    LeftOuttake.setPower(-0.53);
+                    RightOuttake.setPower(-0.45);
+                    LeftOuttake.setPower(-0.45);
                     pathState++;
                     break;
 
                 case 1:
                     follower.followPath(paths.Path2);
                     Intake.setPower(INTAKE_POWERING);
-                    RightOuttake.setPower(-0.50);
-                    LeftOuttake.setPower(-0.50);
+                    RightOuttake.setPower(-0.45);
+                    LeftOuttake.setPower(-0.45);
                     TiltControl.setPosition(0.4);
                     Pusher.setPosition(0.5);
                     try {
