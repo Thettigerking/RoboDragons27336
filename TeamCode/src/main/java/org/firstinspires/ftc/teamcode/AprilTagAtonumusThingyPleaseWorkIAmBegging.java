@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "AprilTagAtonumus")
+@Linear(name = "AprilTagAtonumus")
 public class AprilTagAtonumusThingyPleaseWorkIAmBegging extends LinearOpMode {
 
 
