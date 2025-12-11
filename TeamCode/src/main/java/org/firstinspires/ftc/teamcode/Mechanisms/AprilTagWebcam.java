@@ -83,7 +83,7 @@ public class AprilTagWebcam {
             double Angle = Math.asin(z/Hypotenuse);
 
             System.out.println(Angle);
-            return  Angle;
+            return Angle;
     }
 
     public void stop() {
