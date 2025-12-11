@@ -15,7 +15,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     // --- Hardware ---
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotor Intake;
-    private CRServo BottomRampServo, BottomRampServo2, helperservo, helperservo2;
+    private CRServo BottomRampServo, BottomRampServo2, helperservo, helperservo2, helper3;
     private Servo Pusher, Pusher2, TiltControl;
     private DcMotor RightOuttake, LeftOuttake;
 
@@ -24,8 +24,8 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     //0.2, 0.3
     private static final double[] TILT_POSITIONS = {0.4, 0.25, 0.2};
     private static final double[] OUTTAKE_POWERS = {-0.55, -0.45, -0.35};
-    private static final double PUSHER_OPEN = 0.65;
-    private static final double PUSHER_HALF = 0.55;
+    private static final double PUSHER_OPEN = 1;
+    private static final double PUSHER_HALF = 0.85;
     private static final double PUSHER_CLOSE = 0.45;
     private static final double INTAKE_POWER = -1.0;
     private static final double RAMP_POWER = -1.0;
@@ -50,6 +50,8 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
         BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
         helperservo = hardwareMap.get(CRServo.class, "helperservo");
         helperservo2 = hardwareMap.get(CRServo.class, "helperservo2");
+        helper3 = hardwareMap.get(CRServo.class, "helper3");
+
 
         Pusher  = hardwareMap.get(Servo.class, "Pusher");
         Pusher2 = hardwareMap.get(Servo.class, "Pusher2");
@@ -121,6 +123,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
                 helperservo.setPower(RAMP_POWER);
+                helper3.setPower(-RAMP_POWER);
                 helperservo2.setPower(RAMP_POWER);
             } else if (gamepad2.y) {
                 // example: alternate mode - change as needed
@@ -129,12 +132,14 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
                 BottomRampServo2.setPower(0.6);
                 helperservo.setPower(0.6);
                 helperservo2.setPower(0.6);
+                helper3.setPower(-0.6);
             } else {
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
                 helperservo.setPower(0);
                 helperservo2.setPower(0);
+                helper3.setPower(0);
             }
             if (gamepad2.right_bumper) {
                 if (pushervar) {
