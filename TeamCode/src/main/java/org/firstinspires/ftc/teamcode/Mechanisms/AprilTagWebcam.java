@@ -72,18 +72,24 @@ public class AprilTagWebcam {
         return null;
     }
 
-    public double angleOgOutake20(){
+    public Double angleOgOutake20() {
+        AprilTagDetection tag = getTagBySpecificId(20);
 
-            double x = getTagBySpecificId(20).ftcPose.x;
-            double y = getTagBySpecificId(20).ftcPose.y;
-            double z = getTagBySpecificId(20).ftcPose.z;
+        if (tag == null) {
+            return null;  // Means: tag not found this frame
+        }
 
-            double xyzSolve = ((x*x) + (y*y));
-            double Hypotenuse = Math.sqrt(xyzSolve);
-            double Angle = Math.asin(z/Hypotenuse);
+        double x = tag.ftcPose.x;
+        double y = tag.ftcPose.y;
+        double z = tag.ftcPose.z;
 
-            System.out.println(Angle);
-            return Angle;
+        double hypotenuse = Math.sqrt((x * x) + (y * y));
+
+        if (hypotenuse == 0) {
+            return null; // Avoid divide-by-zero error
+        }
+
+        return Math.asin(z / hypotenuse);
     }
 
     public void stop() {

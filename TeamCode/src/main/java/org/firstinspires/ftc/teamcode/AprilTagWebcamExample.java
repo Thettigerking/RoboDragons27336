@@ -23,7 +23,7 @@ public class AprilTagWebcamExample extends OpMode {
         aprilTagWebcam.update();
         AprilTagDetection id20 = aprilTagWebcam.getTagBySpecificId(20);
         aprilTagWebcam.displayDetectionTelemetry(id20);
-        //telemetry.addData("Angle:", aprilTagWebcam.angleOgOutake20());
+        telemetry.addData("Angle:", aprilTagWebcam.angleOgOutake20());
         AprilTagDetection id24 = aprilTagWebcam.getTagBySpecificId(24);
         aprilTagWebcam.displayDetectionTelemetry(id24);
     }
