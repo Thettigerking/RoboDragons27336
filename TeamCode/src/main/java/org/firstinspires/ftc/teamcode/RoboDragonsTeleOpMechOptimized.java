@@ -33,7 +33,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     private static final double DEFAULT_DRIVE_SCALE = 1.0;
     // --- Debounce / toggle helpers ---
     private boolean prevRightBumper = false;
-    String shooter = "";
+    String shooter = "a";
      private int tiltIndex = 0;
 //a
     @Override
