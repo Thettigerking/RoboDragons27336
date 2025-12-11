@@ -95,5 +95,9 @@ public class AprilTagImplementation extends OpMode {
         aprilTagWebcam.displayDetectionTelemetry(id20);
         AprilTagDetection id24 = aprilTagWebcam.getTagBySpecificId(24);
         aprilTagWebcam.displayDetectionTelemetry(id24);
+
+        if (aprilTagWebcam.getDetectedTags(20 id20)){
+
+        }
     }
 }
