@@ -72,10 +72,27 @@ public class AprilTagWebcam {
         return null;
     }
 
+    public double angleOgOutake20(){
+
+            double x = getTagBySpecificId(20).ftcPose.x;
+            double y = getTagBySpecificId(20).ftcPose.y;
+            double z = getTagBySpecificId(20).ftcPose.z;
+
+            double xyzSolve = ((x*x) + (y*y));
+            double Hypotenuse = Math.sqrt(xyzSolve);
+            double Angle = Math.asin(z/Hypotenuse);
+
+            System.out.println(Angle);
+            return  Angle;
+    }
+
     public void stop() {
         if (visionPortal != null){
             visionPortal.close();
         }
     }
+
 }
+
+
 
