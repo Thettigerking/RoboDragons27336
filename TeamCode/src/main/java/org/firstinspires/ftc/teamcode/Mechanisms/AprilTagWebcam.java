@@ -89,7 +89,9 @@ public class AprilTagWebcam {
             return null; // Avoid divide-by-zero error
         }
 
-        return Math.asin(z / hypotenuse);
+        double radians = Math.asin(z / hypotenuse);
+
+        return Math.toDegrees(radians);
     }
 
     public void stop() {
