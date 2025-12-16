@@ -22,19 +22,19 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
     private DcMotorEx RightOuttake, LeftOuttake;
 
 
-
     // --- Constants / Tuning (easy to change) ---
     private static boolean pushervar = false;
     //0.2, 0.3
     private static final double[] TILT_POSITIONS = {0.45, 0.25, 0.2};
+    private static final double[] speeds = {1200, 1040, 770};
+    private static final double[] speedssmall = {1150, 1000, 730};
     private static final double PUSHER_OPEN = 0.47;
     private static final double PUSHER_HALF = 0.1;
     private static final double PUSHER_CLOSE = 0.45;
     private static final double INTAKE_POWER = -1.0;
     private static final double RAMP_POWER = -1.0;
     private static final double PRECISION_DRIVE_SCALE = 0.45; // when left trigger pressed
-    private static final double DEFAULT_DRIVE_SCALE = 1.0;
-    // --- Debounce / toggle helpers ---
+    private static final double DEFAULT_DRIVE_SCALE = 1.0;// --- Debounce / toggle helpers ---
     private boolean prevRightBumper = false;
 
     String shooter = "a";
@@ -55,7 +55,6 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
         helperservo = hardwareMap.get(CRServo.class, "helperservo");
         helperservo2 = hardwareMap.get(CRServo.class, "helperservo2");
         helper3 = hardwareMap.get(CRServo.class, "helper3");
-
 
         Pusher  = hardwareMap.get(Servo.class, "Pusher");
         Pusher2 = hardwareMap.get(Servo.class, "Pusher2");
@@ -100,8 +99,7 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
 
         // Main loop
         while (opModeIsActive()) {
-            double voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-            final double[] OUTTAKE_POWERS = {(-0.57*(12/voltage)), (-0.45*(12/voltage)), (-0.35*(12/voltage))};
+            final double[] OUTTAKE_POWERS = {(-0.57), (-0.45), (-0.35)};
             // ----- Drive (mecanum) -----
             // Standard, normalized mecanum drive
             double y = gamepad1.left_stick_y; // forward
@@ -179,22 +177,22 @@ public class RoboDragonsTeleOpMechOptimized extends LinearOpMode {
 
             prevRightBumper = rbb;  // update state
             if (gamepad2.dpad_down) {
-                if (RightOuttake.getVelocity() > 1040) {
-                    RightOuttake.setPower(0);
-                } else if (RightOuttake.getVelocity() < 1000){
-                    RightOuttake.setPower(-.75);
-                } else {
-                    RightOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
-                }
-                if (LeftOuttake.getVelocity() < -1040) {
-                    LeftOuttake.setPower(0);
-                } else if (LeftOuttake.getVelocity() > -1000){
-                    LeftOuttake.setPower(-.75);
-                } else {
-                    LeftOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
-                }
+                    if (RightOuttake.getVelocity() > speeds[tiltIndex]) {
+                        RightOuttake.setPower(0);
 
-            } else if (gamepad2.dpad_up) {
+                    } else if (RightOuttake.getVelocity() < speedssmall[tiltIndex]){
+                        RightOuttake.setPower(-.75);
+                    } else {
+                        RightOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
+                    }
+                    if (LeftOuttake.getVelocity() < -speeds[tiltIndex]) {
+                        LeftOuttake.setPower(0);
+                    } else if (LeftOuttake.getVelocity() > -speedssmall[tiltIndex]){
+                        LeftOuttake.setPower(-.75);
+                    } else {
+                        LeftOuttake.setPower(OUTTAKE_POWERS[tiltIndex]);
+                    }
+                } else if (gamepad2.dpad_up) {
               RightOuttake.setPower(1);
                 LeftOuttake.setPower(1);
             } else {
