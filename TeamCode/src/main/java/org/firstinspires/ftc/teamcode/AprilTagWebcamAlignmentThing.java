@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @Autonomous(name = "AprilTagTest")
-public class AprilTagWebcamExample extends OpMode {
+public class AprilTagWebcamAlignmentThing extends OpMode {
 
     private Servo TiltControl;
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
@@ -26,10 +26,6 @@ public class AprilTagWebcamExample extends OpMode {
 
         AprilTagDetection id20 = aprilTagWebcam.getTagBySpecificId(20);
         aprilTagWebcam.displayDetectionTelemetry(id20);
-        telemetry.addData("Angle:", aprilTagWebcam.angleOgOutake20());
-
-        double servoPos = aprilTagWebcam.angleOgOutake20();
-        TiltControl.setPosition(servoPos / 300.0);
 
         AprilTagDetection id24 = aprilTagWebcam.getTagBySpecificId(24);
         aprilTagWebcam.displayDetectionTelemetry(id24);
