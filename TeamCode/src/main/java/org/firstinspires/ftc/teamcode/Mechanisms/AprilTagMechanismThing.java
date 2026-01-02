@@ -15,7 +15,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AprilTagWebcam {
+public class AprilTagMechanismThing {
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
 
@@ -32,7 +32,7 @@ public class AprilTagWebcam {
                 .setDrawTagOutline(true)
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -42,9 +42,9 @@ public class AprilTagWebcam {
 
         visionPortal = builder.build();
     }
-        public void update () {
-            detectedTags = aprilTagProcessor.getDetections();
-        }
+    public void update () {
+        detectedTags = aprilTagProcessor.getDetections();
+    }
     public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }

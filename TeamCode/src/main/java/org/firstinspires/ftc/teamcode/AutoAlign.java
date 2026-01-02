@@ -1,13 +1,17 @@
-package org.firstinspires.ftc.teamcode.Mechanisms;
+package org.firstinspires.ftc.teamcode;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Mechanisms.AprilTagWebcam;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -15,8 +19,13 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AprilTagWebcam {
+@Autonomous(name = "AutoAlign")
+public class AutoAlign extends OpMode {
+
+    AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
+
     private AprilTagProcessor aprilTagProcessor;
+
     private VisionPortal visionPortal;
 
     private List<AprilTagDetection> detectedTags = new ArrayList<>();
@@ -32,7 +41,7 @@ public class AprilTagWebcam {
                 .setDrawTagOutline(true)
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -42,9 +51,10 @@ public class AprilTagWebcam {
 
         visionPortal = builder.build();
     }
-        public void update () {
-            detectedTags = aprilTagProcessor.getDetections();
-        }
+
+    public void update () {
+        detectedTags = aprilTagProcessor.getDetections();
+    }
     public List<AprilTagDetection> getDetectedTags() {
         return detectedTags;
     }
@@ -56,6 +66,7 @@ public class AprilTagWebcam {
             telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectedId.ftcPose.x, detectedId.ftcPose.y, detectedId.ftcPose.z));
             telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectedId.ftcPose.pitch, detectedId.ftcPose.roll, detectedId.ftcPose.yaw));
             telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectedId.ftcPose.range, detectedId.ftcPose.bearing, detectedId.ftcPose.elevation));
+
         } else {
             telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
             telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
@@ -72,35 +83,26 @@ public class AprilTagWebcam {
         return null;
     }
 
-    public Double angleOgOutake20() {
-        AprilTagDetection tag = getTagBySpecificId(20);
-
-        if (tag == null) {
-            return null;  // Means: tag not found this frame
-        }
-
-        double x = tag.ftcPose.x;
-        double y = tag.ftcPose.y;
-        double z = tag.ftcPose.z;
-
-        double hypotenuse = Math.sqrt((x * x) + (y * y));
-
-        if (hypotenuse == 0) {
-            return null; // Avoid divide-by-zero error
-        }
-
-        double radians = Math.asin(z / hypotenuse);
-
-        return Math.toDegrees(radians);
-    }
-
     public void stop() {
         if (visionPortal != null){
             visionPortal.close();
         }
     }
 
+    @Override
+    public void init() {
+        aprilTagWebcam.init(hardwareMap, telemetry);
+    }
+
+    @Override
+    public void loop() {
+        aprilTagWebcam.update();
+
+        AprilTagDetection id20 = aprilTagWebcam.getTagBySpecificId(20);
+        aprilTagWebcam.displayDetectionTelemetry(id20);
+
+        AprilTagDetection id24 = aprilTagWebcam.getTagBySpecificId(24);
+        aprilTagWebcam.displayDetectionTelemetry(id24);
+
+    }
 }
-
-
-
