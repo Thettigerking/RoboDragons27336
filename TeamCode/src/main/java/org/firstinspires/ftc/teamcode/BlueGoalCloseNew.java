@@ -4,7 +4,6 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -22,10 +21,7 @@ public class BlueGoalCloseNew extends OpMode {
     private DcMotor Intake;
     private static CRServo BottomRampServo;
     private static CRServo BottomRampServo2;
-    private static CRServo helperservo;
-    private static CRServo helperservo2;
     private static Servo Pusher;
-    private static Servo Pusher2;
     private Servo TiltControl;
     private DcMotor RightOuttake, LeftOuttake;
 
@@ -40,7 +36,7 @@ public class BlueGoalCloseNew extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(72, 8, Math.toRadians(90)));
+        follower.setStartingPose(new Pose(33.5, 127, Math.toRadians(90)));
 
         paths = new Paths(follower); // Build paths
 
@@ -83,11 +79,9 @@ public class BlueGoalCloseNew extends OpMode {
 
             BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
             BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
-            helperservo = hardwareMap.get(CRServo.class, "helperservo");
-            helperservo2 = hardwareMap.get(CRServo.class, "helperservo2");
 
             Pusher  = hardwareMap.get(Servo.class, "Pusher");
-            Pusher2 = hardwareMap.get(Servo.class, "Pusher2");
+
             TiltControl = hardwareMap.get(Servo.class, "TiltControl");
 
             Intake = hardwareMap.get(DcMotor.class, "Intake");
@@ -99,7 +93,7 @@ public class BlueGoalCloseNew extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(23.500, 127.000), new Pose(44.000, 107.000))
+                            new BezierLine(new Pose(33.500, 127.000), new Pose(44.000, 107.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(311))
                     .build();
@@ -190,6 +184,7 @@ public class BlueGoalCloseNew extends OpMode {
                     break;
 
                 case 1:
+                    follower.followPath(paths.Path2);
                     pathState++;
                     break;
 
