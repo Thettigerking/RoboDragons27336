@@ -22,9 +22,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Blue Autonomous", group = "Autonomous")
+@Autonomous(name = "Red Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class BlueAuto extends OpMode {
+public class RedAuto extends OpMode {
+
     private double outtakespeed = -890;
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
@@ -40,13 +41,14 @@ public class BlueAuto extends OpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
-//131
+
+    //131
     @Override
     public void init() {
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(25, 131, Math.toRadians(324)));
+        follower.setStartingPose(new Pose(25, 131, Math.toRadians(324)).mirror());
 
         paths = new Paths(follower); // Build paths
         Intake = hardwareMap.get(DcMotor.class, "Intake");
@@ -79,6 +81,7 @@ public class BlueAuto extends OpMode {
 
     @Override
     public void loop() {
+
         follower.update(); // Update Pedro Pathing
         try {
             pathState = autonomousPathUpdate(); // Update autonomous state machine
@@ -114,114 +117,117 @@ public class BlueAuto extends OpMode {
         public PathChain Path14;
 
         public Paths(Follower follower) {
+
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(25, 131), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(25, 131).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(312))
+                    .setLinearHeadingInterpolation(Math.toRadians(324+180), Math.toRadians(317-90))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(46.000, 88.000))
+                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(48.000, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(317-90), Math.toRadians(180+180))
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(46.000, 88.000), new Pose(17, 88.000))
+                            new BezierLine(new Pose(48.000, 88.000-2).mirror(), new Pose(18, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
 
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17, 88.000), new Pose(30.000, 88.000))
+                            new BezierLine(new Pose(18, 88.000-2).mirror(), new Pose(35.000, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(90+180))
                     .build();
 
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(30.000, 88.000), new Pose(17.000, 77.000))
+                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 77.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(90+180))
                     .build();
 
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17.000, 77.000), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(17.000, 77.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(306))
+                    .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(314-90))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 63))
+                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(50.000, 63-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(306), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(314-90), Math.toRadians(180+180))
                     .build();
 
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 63), new Pose(9.5000, 61))
+                            new BezierLine(new Pose(50.000, 63-2).mirror(), new Pose(10.5000, 61-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 61), new Pose(20, 63))
+                            new BezierLine(new Pose(10.5, 61-2).mirror(), new Pose(20, 63-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
 
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 63), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(20, 63-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(326))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(320-90))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(41.000, 40.500))
+                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(41.000, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(326), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(320-90), Math.toRadians(180+180))
                     .build();
 
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 40.500), new Pose(11, 40.500))
+                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(12, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
 
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(11, 40.500), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(12, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(322))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(322-90))
+
                     .build();
+
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48, 96), new Pose(24, 88.000))
+                            new BezierLine(new Pose(48, 96-2).mirror(), new Pose(24, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(322), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(322-90), Math.toRadians(90+180))
                     .build();
 
         }
@@ -331,14 +337,14 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1400) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1100);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-500);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1150);
+                            LeftOuttake.setVelocity(-1100);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-500);
                         } else {
@@ -388,14 +394,14 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1400) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1100);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-500);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1150);
+                            LeftOuttake.setVelocity(-1100);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-500);
                         } else {
@@ -439,14 +445,14 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1400) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1220);
+                            RightOuttake.setVelocity(-1180);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-500);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1220);
+                            LeftOuttake.setVelocity(-1180);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-500);
                         } else {
