@@ -1,93 +1,108 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import android.util.Size;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@TeleOp(name = "AutoAlign")
-public class AutoAlign extends LinearOpMode {
-    private DcMotorEx RightOuttake;
-    private DcMotorEx LeftOuttake;
-    private Servo TiltControl;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Mechanisms.AprilTagWebcam;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-    private DcMotor Intake;
-    private CRServo BottomRampServo, BottomRampServo2, helper3;
-    private static final double INTAKE_POWER = -1.0;
-    private static final double RAMP_POWER = -1;
-    private Limelight3A limelight;
-    private double distance;
+import java.util.ArrayList;
+import java.util.List;
 
+@Autonomous(name = "AutoAlign")
+public class AutoAlign extends OpMode {
 
-    double x = 0;
-    double voltage;
-    @Override
-    public void runOpMode() {
+    AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
 
-        Intake = hardwareMap.get(DcMotor.class, "Intake");
-        BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
-        BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
-        helper3 = hardwareMap.get(CRServo.class, "helper3");
+    private AprilTagProcessor aprilTagProcessor;
 
-        RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
-        LeftOuttake = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
-        TiltControl = hardwareMap.get(Servo.class, "TiltControl");
+    private VisionPortal visionPortal;
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+    private List<AprilTagDetection> detectedTags = new ArrayList<>();
 
-        limelight.pipelineSwitch(0);
+    private Telemetry telemetry;
+
+    public void init(HardwareMap hwMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
 
 
-        waitForStart();
-        while (opModeIsActive()) {
-            LLResult result = limelight.getLatestResult();
-            distance = distancem(result.getTa());
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
+                .build();
 
-            if (gamepad2.a) {
-                x = x +100;
-                sleep(100);
-            } else if (gamepad2.x) {
-                x = x + 10;
-                sleep(100);
-            } else if (gamepad2.b) {
-                x = x - 100;
-                sleep(100);
-            } else if (gamepad2.y) {
-                x = x - 10;
-                sleep(100);
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+        builder.setCamera(hwMap.get(WebcamName.class, "Webcam67"));
+        builder.setCameraResolution(new Size(640, 480));
+        builder.addProcessor(aprilTagProcessor);
+
+        visionPortal = builder.build();
+    }
+
+    public void update () {
+        detectedTags = aprilTagProcessor.getDetections();
+    }
+    public List<AprilTagDetection> getDetectedTags() {
+        return detectedTags;
+    }
+
+    public void displayDetectionTelemetry(AprilTagDetection detectedId) {
+        if (detectedId == null) {return;}
+        if (detectedId.metadata != null) {
+            telemetry.addLine(String.format("\n==== (ID %d) %s", detectedId.id, detectedId.metadata.name));
+            telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectedId.ftcPose.x, detectedId.ftcPose.y, detectedId.ftcPose.z));
+            telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectedId.ftcPose.pitch, detectedId.ftcPose.roll, detectedId.ftcPose.yaw));
+            telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectedId.ftcPose.range, detectedId.ftcPose.bearing, detectedId.ftcPose.elevation));
+
+        } else {
+            telemetry.addLine(String.format("\n==== (ID %d) Unknown", detectedId.id));
+            telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detectedId.center.x, detectedId.center.y));
+        }
+
+    }
+
+    public AprilTagDetection getTagBySpecificId(int id){
+        for (AprilTagDetection detection : detectedTags) {
+            if (detection.id ==  id){
+                return detection;
             }
-            if (gamepad2.right_trigger > 0) {
-                Intake.setPower(INTAKE_POWER);
-                BottomRampServo.setPower(RAMP_POWER);
-                BottomRampServo2.setPower(RAMP_POWER);
-                helper3.setPower(-RAMP_POWER);
-            } else {
-                Intake.setPower(0);
-                BottomRampServo.setPower(0);
-                BottomRampServo2.setPower(0);
-                helper3.setPower(0);
-            }
-            TiltControl.setPosition(0.35);
-            RightOuttake.setVelocity(x);
-            LeftOuttake.setVelocity(-x);
-            telemetry.addData("Right Power: ",RightOuttake.getPower());
-            telemetry.addData("Left Power: ",LeftOuttake.getPower());
-            telemetry.addData("Right RPM: ",RightOuttake.getVelocity());
-            telemetry.addData("Left RPM: ",LeftOuttake.getVelocity());
-            telemetry.addData("DISTANCE:",distance);
+        }
+        return null;
+    }
 
-            telemetry.update();
+    public void stop() {
+        if (visionPortal != null){
+            visionPortal.close();
         }
     }
-    public double distancem(double x) {
-        double AprilTagDistance = Math.pow((x/2604.88382),-0.5367);
-        return AprilTagDistance;
+
+    @Override
+    public void init() {
+        aprilTagWebcam.init(hardwareMap, telemetry);
+    }
+
+    @Override
+    public void loop() {
+        aprilTagWebcam.update();
+
+        AprilTagDetection id20 = aprilTagWebcam.getTagBySpecificId(20);
+        aprilTagWebcam.displayDetectionTelemetry(id20);
+
+        AprilTagDetection id24 = aprilTagWebcam.getTagBySpecificId(24);
+        aprilTagWebcam.displayDetectionTelemetry(id24);
+
     }
 }
