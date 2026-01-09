@@ -258,7 +258,7 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
                             RightOuttake.setVelocity(-1350);
@@ -328,7 +328,7 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
                             RightOuttake.setVelocity(-1150);
@@ -385,17 +385,17 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1120);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-500);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1150);
+                            LeftOuttake.setVelocity(-1120);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-500);
                         } else {
@@ -436,17 +436,17 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1220);
+                            RightOuttake.setVelocity(-1190);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-500);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1220);
+                            LeftOuttake.setVelocity(-1190);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-500);
                         } else {

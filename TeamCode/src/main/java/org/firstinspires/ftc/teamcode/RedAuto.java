@@ -153,7 +153,7 @@ public class RedAuto extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 77.000-2).mirror())
+                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 78.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(90+180))
                     .build();
@@ -161,7 +161,7 @@ public class RedAuto extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17.000, 77.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(17.000, 78.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(314-90))
                     .build();
@@ -169,7 +169,7 @@ public class RedAuto extends OpMode {
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(50.000, 63-2).mirror())
+                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(54.000, 65-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(314-90), Math.toRadians(180+180))
                     .build();
@@ -177,14 +177,14 @@ public class RedAuto extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(50.000, 63-2).mirror(), new Pose(10.5000, 61-2).mirror())
+                            new BezierLine(new Pose(54.000, 65-2).mirror(), new Pose(11.5000, 61.5-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(10.5, 61-2).mirror(), new Pose(20, 63-2).mirror())
+                            new BezierLine(new Pose(11.5, 61.5-2).mirror(), new Pose(20, 63-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -194,7 +194,7 @@ public class RedAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(20, 63-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(320-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(314-90))
                     .build();
 
             Path10 = follower
@@ -202,13 +202,13 @@ public class RedAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(41.000, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(320-90), Math.toRadians(180+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(314-90), Math.toRadians(180+180))
                     .build();
 
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(12, 40.500-2).mirror())
+                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(14, 40.500-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -216,9 +216,9 @@ public class RedAuto extends OpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(12, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(14, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(322-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(319-90))
 
                     .build();
 
@@ -227,7 +227,7 @@ public class RedAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(48, 96-2).mirror(), new Pose(24, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(322-90), Math.toRadians(90+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(319-90), Math.toRadians(90+180))
                     .build();
 
         }
@@ -253,6 +253,7 @@ public class RedAuto extends OpMode {
                     pathState++;
                     break;
                 case 1:
+                    LLResult result = limelight.getLatestResult();
 
                     Pusher.setPosition(0.1);
                     try {
@@ -264,19 +265,49 @@ public class RedAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    if (result.getTx() >= 5.25) {
+                        if (result.getTx() >= 4.25) {
+                            leftFront.setPower(0.15);
+                            leftBack.setPower(0.15);
+                            rightBack.setPower(-0.15);
+                            rightFront.setPower(-0.15);
+                        } else {
+                            leftFront.setPower(0.2);
+                            leftBack.setPower(0.2);
+                            rightBack.setPower(-0.2);
+                            rightFront.setPower(-0.2);
+                        }
+                    } else if (result.getTx() <= -2.5) {
+                        if (result.getTx() <= 1.75) {
+                            leftFront.setPower(-0.15);
+                            leftBack.setPower(-0.15);
+                            rightBack.setPower(0.15);
+                            rightFront.setPower(0.15);
+                        } else {
+                            leftFront.setPower(-0.2);
+                            leftBack.setPower(-0.2);
+                            rightBack.setPower(0.2);
+                            rightFront.setPower(0.2);
+                        }
+                    } else {
+                        leftFront.setPower(0);
+                        leftBack.setPower(0);
+                        rightBack.setPower(0);
+                        rightFront.setPower(0);
+                    }
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1350);
+                            RightOuttake.setVelocity(-1330);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-520);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1350);
+                            LeftOuttake.setVelocity(-1330);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-520);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -315,7 +346,7 @@ public class RedAuto extends OpMode {
                     //LeftOuttake.setVelocity(-880);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
-                    sleep(1000);
+                    sleep(200);
                     follower.followPath(paths.Path6);
 
                     pathState++;
@@ -334,19 +365,20 @@ public class RedAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1100);
+                            RightOuttake.setVelocity(-1150);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-520);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1100);
+                            LeftOuttake.setVelocity(-1120);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-550);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -391,19 +423,19 @@ public class RedAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1100);
+                            RightOuttake.setVelocity(-1120);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-550);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1100);
+                            LeftOuttake.setVelocity(-1120);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-550);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -442,19 +474,19 @@ public class RedAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1400) {
+                    while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1180);
+                            RightOuttake.setVelocity(-1160);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-550);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1180);
+                            LeftOuttake.setVelocity(-1160);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-550);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
