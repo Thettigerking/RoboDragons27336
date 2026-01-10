@@ -214,56 +214,69 @@ public class RoboMain extends LinearOpMode {
                     myTimer.reset();
                     timerStarted = true;
                 }
-                    if (gamepad2.right_bumper || gamepad1.right_bumper) {
-                        if (gamepad2.a) {
-                            manual = true;
-                        } else {
-                            manual = false;
-                        }
-                        } else {
-                        if (result.getTx() >= 5.25) {
-                            if (result.getTx() >= 4.25) {
-                                leftFront.setPower(0.15);
-                                leftBack.setPower(0.15);
-                                rightBack.setPower(-0.15);
-                                rightFront.setPower(-0.15);
-                            } else {
-                                leftFront.setPower(0.2);
-                                leftBack.setPower(0.2);
-                                rightBack.setPower(-0.2);
-                                rightFront.setPower(-0.2);
-                            }
-                        } else if (result.getTx() <= -2.5) {
-                            if (result.getTx() <= 1.75) {
-                                leftFront.setPower(-0.15);
-                                leftBack.setPower(-0.15);
-                                rightBack.setPower(0.15);
-                                rightFront.setPower(0.15);
-                            } else {
-                                leftFront.setPower(-0.2);
-                                leftBack.setPower(-0.2);
-                                rightBack.setPower(0.2);
-                                rightFront.setPower(0.2);
-                            }
-                        } else {
-                            leftFront.setPower(0);
-                            leftBack.setPower(0);
-                            rightBack.setPower(0);
-                            rightFront.setPower(0);
-                        }
-                    }
-                                // AFTER 500 ms → allow intake
-                        if (myTimer.milliseconds() >= 500) {
-                            macroa = true;
+
+                // =========================
+                // MANUAL OVERRIDE
+                // =========================
+                if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                    manual = gamepad2.a;
+                } else {
+
+                    // =========================
+                    // AUTO ALIGN (P CONTROL)
+                    // =========================
+                    double tx = result.getTx();   // Limelight angle error
+
+                    // ---- TUNING VALUES ----
+                    double kP = 0.02;             // proportional gain
+                    double minPower = 0.08;       // minimum turn power
+                    double maxPower = 0.30;       // max turn power
+                    double deadband = 0.5;        // degrees allowed error
+
+                    if (Math.abs(tx) > deadband) {
+
+                        double turnPower = tx * kP;
+
+                        // Clamp to max power
+                        turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                        // Enforce minimum power
+                        if (Math.abs(turnPower) < minPower) {
+                            turnPower = Math.signum(turnPower) * minPower;
                         }
 
+                        // Apply turn
+                        leftFront.setPower(turnPower);
+                        leftBack.setPower(turnPower);
+                        rightFront.setPower(-turnPower);
+                        rightBack.setPower(-turnPower);
+
+                    } else {
+                        // Aligned
+                        leftFront.setPower(0);
+                        leftBack.setPower(0);
+                        rightFront.setPower(0);
+                        rightBack.setPower(0);
+                    }
+                }
+
+                // =========================
+                // DELAY BEFORE INTAKE
+                // =========================
+                if (myTimer.milliseconds() >= 500) {
+                    macroa = true;
+                }
 
             } else {
-                // Reset everything when X is released
+                // =========================
+                // RESET WHEN TRIGGER RELEASED
+                // =========================
                 macro = false;
                 macroa = false;
                 timerStarted = false;
+
             }
+
             if (gamepad2.left_trigger > 0 && distance < 500) {
 
                 macrob = true;
@@ -275,12 +288,12 @@ public class RoboMain extends LinearOpMode {
                 }
 
                 // Drive alignment
-                if (result.getTx() >= 2.5) {
+                if (result.getTx() >= 5.05) {
                     leftFront.setPower(0.2);
                     leftBack.setPower(0.2);
                     rightBack.setPower(-0.2);
                     rightFront.setPower(-0.2);
-                } else if (result.getTx() <= -2.5) {
+                } else if (result.getTx() <= 0.05) {
                     leftFront.setPower(-0.2);
                     leftBack.setPower(-0.2);
                     rightBack.setPower(0.2);
@@ -402,9 +415,9 @@ public class RoboMain extends LinearOpMode {
             if (RightOuttake.getVelocity() > speed + 10) {
                 RightOuttake.setVelocity(-50);
             } else if (RightOuttake.getVelocity() < speed - 10) {
-                RightOuttake.setVelocity(speed + 350);
+                RightOuttake.setVelocity(speed + 320);
             } else {
-                RightOuttake.setVelocity(speed-350);
+                RightOuttake.setVelocity(speed-320);
             }
 
             if (LeftOuttake.getVelocity() > speed + 10) {
