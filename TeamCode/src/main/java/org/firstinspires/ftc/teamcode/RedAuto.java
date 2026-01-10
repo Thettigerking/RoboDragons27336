@@ -32,7 +32,7 @@ public class RedAuto extends OpMode {
     private Servo Pusher, TiltControl;
     private DcMotorEx RightOuttake, LeftOuttake;
     private Limelight3A limelight;
-
+    private boolean align = false;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
 
     private ElapsedTime aimTimer = new ElapsedTime();
@@ -153,7 +153,7 @@ public class RedAuto extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 78.000-2).mirror())
+                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 79.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(90+180))
                     .build();
@@ -161,7 +161,7 @@ public class RedAuto extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17.000, 78.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(17.000, 79.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(314-90))
                     .build();
@@ -194,7 +194,7 @@ public class RedAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(20, 63-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(314-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(310-90))
                     .build();
 
             Path10 = follower
@@ -202,7 +202,7 @@ public class RedAuto extends OpMode {
                     .addPath(
                             new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(41.000, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(314-90), Math.toRadians(180+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(310-90), Math.toRadians(180+180))
                     .build();
 
             Path11 = follower
@@ -253,59 +253,62 @@ public class RedAuto extends OpMode {
                     pathState++;
                     break;
                 case 1:
-                    LLResult result = limelight.getLatestResult();
-
+                    align = false;
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    if (result.getTx() >= 5.25) {
-                        if (result.getTx() >= 4.25) {
-                            leftFront.setPower(0.15);
-                            leftBack.setPower(0.15);
-                            rightBack.setPower(-0.15);
-                            rightFront.setPower(-0.15);
+                    while (!align) {
+                        LLResult result = limelight.getLatestResult();
+                        if (result.getTx() >= 2.4) {
+                            if (result.getTx() >= 1.4) {
+                                leftFront.setPower(0.15);
+                                leftBack.setPower(0.15);
+                                rightBack.setPower(-0.15);
+                                rightFront.setPower(-0.15);
+                            } else {
+                                leftFront.setPower(0.2);
+                                leftBack.setPower(0.2);
+                                rightBack.setPower(-0.2);
+                                rightFront.setPower(-0.2);
+                            }
+                        } else if (result.getTx() <= -4.4) {
+                            if (result.getTx() <= -3.4) {
+                                leftFront.setPower(-0.15);
+                                leftBack.setPower(-0.15);
+                                rightBack.setPower(0.15);
+                                rightFront.setPower(0.15);
+                            } else {
+                                leftFront.setPower(-0.2);
+                                leftBack.setPower(-0.2);
+                                rightBack.setPower(0.2);
+                                rightFront.setPower(0.2);
+                            }
                         } else {
-                            leftFront.setPower(0.2);
-                            leftBack.setPower(0.2);
-                            rightBack.setPower(-0.2);
-                            rightFront.setPower(-0.2);
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightBack.setPower(0);
+                            rightFront.setPower(0);
+                            align = true;
                         }
-                    } else if (result.getTx() <= -2.5) {
-                        if (result.getTx() <= 1.75) {
-                            leftFront.setPower(-0.15);
-                            leftBack.setPower(-0.15);
-                            rightBack.setPower(0.15);
-                            rightFront.setPower(0.15);
-                        } else {
-                            leftFront.setPower(-0.2);
-                            leftBack.setPower(-0.2);
-                            rightBack.setPower(0.2);
-                            rightFront.setPower(0.2);
-                        }
-                    } else {
-                        leftFront.setPower(0);
-                        leftBack.setPower(0);
-                        rightBack.setPower(0);
-                        rightFront.setPower(0);
                     }
+                    aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1330);
+                            RightOuttake.setVelocity(-1300);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-520);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1330);
+                            LeftOuttake.setVelocity(-1300);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-520);
                         } else {
@@ -353,7 +356,7 @@ public class RedAuto extends OpMode {
                     break;
 
                 case 6:
-
+                    align = false;
                     follower.followPath(paths.Path7);
                     Pusher.setPosition(0.1);
                     try {
@@ -361,15 +364,48 @@ public class RedAuto extends OpMode {
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-
+                    aimTimer.reset();
+                    while (!align) {
+                        LLResult result = limelight.getLatestResult();
+                        if (result.getTx() >= 2.4) {
+                            if (result.getTx() >= 1.4) {
+                                leftFront.setPower(0.15);
+                                leftBack.setPower(0.15);
+                                rightBack.setPower(-0.15);
+                                rightFront.setPower(-0.15);
+                            } else {
+                                leftFront.setPower(0.2);
+                                leftBack.setPower(0.2);
+                                rightBack.setPower(-0.2);
+                                rightFront.setPower(-0.2);
+                            }
+                        } else if (result.getTx() <= -4.4) {
+                            if (result.getTx() <= -3.4) {
+                                leftFront.setPower(-0.15);
+                                leftBack.setPower(-0.15);
+                                rightBack.setPower(0.15);
+                                rightFront.setPower(0.15);
+                            } else {
+                                leftFront.setPower(-0.2);
+                                leftBack.setPower(-0.2);
+                                rightBack.setPower(0.2);
+                                rightFront.setPower(0.2);
+                            }
+                        } else {
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightBack.setPower(0);
+                            rightFront.setPower(0);
+                            align = true;
+                        }
+                    }
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1120);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-520);
                         } else {
@@ -419,21 +455,55 @@ public class RedAuto extends OpMode {
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
+                    aimTimer.reset();
+                    while (!align) {
+                        LLResult result = limelight.getLatestResult();
+                        if (result.getTx() >= 2.4) {
+                            if (result.getTx() >= 1.4) {
+                                leftFront.setPower(0.15);
+                                leftBack.setPower(0.15);
+                                rightBack.setPower(-0.15);
+                                rightFront.setPower(-0.15);
+                            } else {
+                                leftFront.setPower(0.2);
+                                leftBack.setPower(0.2);
+                                rightBack.setPower(-0.2);
+                                rightFront.setPower(-0.2);
+                            }
+                        } else if (result.getTx() <= -4.4) {
+                            if (result.getTx() <= -3.4) {
+                                leftFront.setPower(-0.15);
+                                leftBack.setPower(-0.15);
+                                rightBack.setPower(0.15);
+                                rightFront.setPower(0.15);
+                            } else {
+                                leftFront.setPower(-0.2);
+                                leftBack.setPower(-0.2);
+                                rightBack.setPower(0.2);
+                                rightFront.setPower(0.2);
+                            }
+                        } else {
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightBack.setPower(0);
+                            rightFront.setPower(0);
+                            align = true;
+                        }
+                    }
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1120);
+                            RightOuttake.setVelocity(-1090);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-550);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1120);
+                            LeftOuttake.setVelocity(-1090);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-550);
                         } else {
@@ -470,21 +540,55 @@ public class RedAuto extends OpMode {
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
+                    aimTimer.reset();
+                    while (!align) {
+                        LLResult result = limelight.getLatestResult();
+                        if (result.getTx() >= 2.4) {
+                            if (result.getTx() >= 1.4) {
+                                leftFront.setPower(0.15);
+                                leftBack.setPower(0.15);
+                                rightBack.setPower(-0.15);
+                                rightFront.setPower(-0.15);
+                            } else {
+                                leftFront.setPower(0.2);
+                                leftBack.setPower(0.2);
+                                rightBack.setPower(-0.2);
+                                rightFront.setPower(-0.2);
+                            }
+                        } else if (result.getTx() <= -4.4) {
+                            if (result.getTx() <= -3.4) {
+                                leftFront.setPower(-0.15);
+                                leftBack.setPower(-0.15);
+                                rightBack.setPower(0.15);
+                                rightFront.setPower(0.15);
+                            } else {
+                                leftFront.setPower(-0.2);
+                                leftBack.setPower(-0.2);
+                                rightBack.setPower(0.2);
+                                rightFront.setPower(0.2);
+                            }
+                        } else {
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightBack.setPower(0);
+                            rightFront.setPower(0);
+                            align = true;
+                        }
+                    }
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1160);
+                            RightOuttake.setVelocity(-1130);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-550);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1160);
+                            LeftOuttake.setVelocity(-1130);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-550);
                         } else {
