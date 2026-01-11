@@ -450,7 +450,7 @@ public class RoboMain extends LinearOpMode {
         //} else if (LeftOuttake.getVelocity() < speed-25) {
         //    LeftOuttake.setPower(.75);
         //} else {
-            //LeftOuttake.setVelocity(speed);
+        //LeftOuttake.setVelocity(speed);
         //}
 
 /*                if (RightOuttake.getVelocity() > speed+25) {
@@ -474,4 +474,3 @@ public class RoboMain extends LinearOpMode {
         return AprilTagDistance;
     }
 }
-
