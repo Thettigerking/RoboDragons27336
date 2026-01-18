@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Mechanisms.TestBenchColor;
+import org.firstinspires.ftc.teamcode.Mechanisms.ColorSensorDetection;
 
 @TeleOp(name = "ColorSensorTest")
 
 public class ColorSensorTest extends OpMode {
-    TestBenchColor bench = new TestBenchColor();
-    TestBenchColor.DetectedColor detectedColor;
+    ColorSensorDetection bench = new ColorSensorDetection();
+    ColorSensorDetection.DetectedColor detectedColor;
 
     @Override
     public void init() {
@@ -22,7 +22,4 @@ public class ColorSensorTest extends OpMode {
         detectedColor = bench.getDetectedColor(telemetry);
         telemetry.addData("Color Detected", detectedColor);
     }
-
-    //Something
-
 }
