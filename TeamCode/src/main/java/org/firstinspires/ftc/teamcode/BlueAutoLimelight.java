@@ -22,9 +22,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-@Autonomous(name = "Blue Autonomous", group = "Autonomous")
+@Autonomous(name = "Blue Auto Testing", group = "Autonomous")
 @Configurable // Panels
-public class BlueAuto extends OpMode {
+public class BlueAutoLimelight extends OpMode {
     private double outtakespeed = -890;
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
@@ -39,13 +39,13 @@ public class BlueAuto extends OpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
-//131
+    //131
     @Override
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(25, 131, Math.toRadians(324)));
+        follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)));
 
         paths = new Paths(follower); // Build paths
         Intake = hardwareMap.get(DcMotor.class, "Intake");
@@ -110,9 +110,18 @@ public class BlueAuto extends OpMode {
         public PathChain Path12;
         public PathChain Path13;
 
+        public PathChain Path15;
         public PathChain Path14;
 
         public Paths(Follower follower) {
+            Path15 =  follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(8.5, 8.5), new Pose(25, 131))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(324))
+                    .build();
+
             Path1 = follower
                     .pathBuilder()
                     .addPath(
@@ -124,7 +133,7 @@ public class BlueAuto extends OpMode {
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 88.000))
+                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 84.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(180))
                     .build();
@@ -132,7 +141,7 @@ public class BlueAuto extends OpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 88.000), new Pose(17, 88.000))
+                            new BezierLine(new Pose(48.000, 84.000), new Pose(15, 84.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -140,7 +149,7 @@ public class BlueAuto extends OpMode {
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17, 88.000), new Pose(35.000, 79.000))
+                            new BezierLine(new Pose(15, 84.000), new Pose(35.000, 79.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                     .build();
@@ -148,7 +157,7 @@ public class BlueAuto extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 79.000), new Pose(17.750, 75.000))
+                            new BezierLine(new Pose(35.000, 79.000), new Pose(16.750, 75.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -156,7 +165,7 @@ public class BlueAuto extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17.750, 75.000), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(16.750, 75.000), new Pose(48.000, 96.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(306))
                     .build();
@@ -164,7 +173,7 @@ public class BlueAuto extends OpMode {
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 63))
+                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 61))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(306), Math.toRadians(180))
                     .build();
@@ -172,14 +181,14 @@ public class BlueAuto extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 63), new Pose(9.5000, 61))
+                            new BezierLine(new Pose(48.000, 61), new Pose(8.5000, 59))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 61), new Pose(20, 63))
+                            new BezierLine(new Pose(8.5, 59), new Pose(20, 61))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -187,7 +196,7 @@ public class BlueAuto extends OpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 63), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(20, 61), new Pose(48.000, 96.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(326))
                     .build();
@@ -195,7 +204,7 @@ public class BlueAuto extends OpMode {
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(41.000, 40.500))
+                            new BezierLine(new Pose(48.000, 96.000), new Pose(41.000, 36.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(326), Math.toRadians(180))
                     .build();
@@ -203,7 +212,7 @@ public class BlueAuto extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 40.500), new Pose(11, 40.500))
+                            new BezierLine(new Pose(41.000, 36.500), new Pose(8, 36.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -211,7 +220,7 @@ public class BlueAuto extends OpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(11, 40.500), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(8, 36.500), new Pose(48.000, 96.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(322))
                     .build();
@@ -260,16 +269,16 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1350);
+                            RightOuttake.setVelocity(-1550);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-350);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1350);
+                            LeftOuttake.setVelocity(-1550);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-350);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -330,16 +339,16 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1550);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-350);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1150);
+                            LeftOuttake.setVelocity(-1550);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-350);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -387,16 +396,16 @@ public class BlueAuto extends OpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1120);
+                            RightOuttake.setVelocity(-1550);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-350);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1120);
+                            LeftOuttake.setVelocity(-1550);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-350);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -434,20 +443,21 @@ public class BlueAuto extends OpMode {
                     aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
+
                     helper3.setPower(1);
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1190);
+                            RightOuttake.setVelocity(-1550);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-350);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1190);
+                            LeftOuttake.setVelocity(-1550);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-350);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }

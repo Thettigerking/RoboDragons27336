@@ -280,7 +280,6 @@ public class RoboMain extends LinearOpMode {
             if (gamepad2.left_trigger > 0 && distance < 500) {
 
                 macrob = true;
-
                 // Start timer ONCE
                 if (!timerStarteda) {
                     myTimera.reset();
