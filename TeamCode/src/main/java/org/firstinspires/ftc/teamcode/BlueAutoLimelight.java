@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Configurable // Panels
 public class BlueAutoLimelight extends OpMode {
     private double outtakespeed = 890;
+    private boolean shooting = false;
+
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
     private Servo Pusher, TiltControl;
@@ -100,8 +102,13 @@ public class BlueAutoLimelight extends OpMode {
 
     @Override
     public void loop() {
-        LLResult result = limelight.getLatestResult();
+        if(shooting) {
 
+        } else {
+            aimTimer.reset();
+        }
+        LLResult result = limelight.getLatestResult();
+        Intake.setPower(-10    );
         LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
         RightOuttake.setDirection(DcMotor.Direction.REVERSE);
         follower.update(); // Update Pedro Pathing
@@ -110,12 +117,35 @@ public class BlueAutoLimelight extends OpMode {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        Intake.setPower(-1);
+        distance = distancem(result.getTa());
+        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+        //speed = (4.4 * distance) + 740;
+        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
+        Pose3D botpose = result.getBotpose();
+        TiltControl.setPosition(.35);
+        if (RightOuttake.getVelocity() > speed + 25) {
+            RightOuttake.setVelocity(0);
+        } else if (RightOuttake.getVelocity() < speed - 25) {
+            RightOuttake.setVelocity(speed + (speed * speedx)+75);
+        } else {
+            RightOuttake.setVelocity(speed);
+        }
 
+        if (LeftOuttake.getVelocity() > speed + 25) {
+            LeftOuttake.setVelocity(0);
+        } else if (LeftOuttake.getVelocity() < speed - 25) {
+            LeftOuttake.setVelocity(speed + (speed * speedx)+75);
+        } else {
+            LeftOuttake.setVelocity(speed);
+        }
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.debug("LeftOuttake Velocity",LeftOuttake.getVelocity());
+        panelsTelemetry.debug("RightOuttake Velocity",RightOuttake                         .getVelocity());
         telemetry.addData("Ta:",result.getTa());
         panelsTelemetry.update(telemetry);
     }
@@ -184,7 +214,7 @@ public class BlueAutoLimelight extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 79.000), new Pose(16.750, 75.000))
+                            new BezierLine(new Pose(35.000, 79.000), new Pose(17.750, 75.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -192,7 +222,7 @@ public class BlueAutoLimelight extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(16.750, 75.000), new Pose(54.000, 90.000))
+                            new BezierLine(new Pose(17.750, 75.000), new Pose(54.000, 90.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(312))
                     .build();
@@ -276,20 +306,17 @@ public class BlueAutoLimelight extends OpMode {
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
                     //LeftOuttake.setVelocity(-860);
-                    Intake.setPower(-1);
                     follower.followPath(paths.Path1);
 
                     pathState++;
                     break;
                 case 1:
                     align = false;
-                    Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
@@ -303,7 +330,7 @@ public class BlueAutoLimelight extends OpMode {
                         double kP = 0.02;             // proportional gain
                         double minPower = 0.08;       // minimum turn power
                         double maxPower = 0.30;       // max turn power
-                        double deadband = 0.1;        // degrees allowed error
+                        double deadband = 0.5;        // degrees allowed error
 
                         if (Math.abs(tx) > deadband) {
 
@@ -329,54 +356,37 @@ public class BlueAutoLimelight extends OpMode {
                             leftBack.setPower(0);
                             rightFront.setPower(0);
                             rightBack.setPower(0);
+                            Intake.setPower(-1);
                             align = true;
+                            Thread.sleep(200);
                         }
                     }
-                    follower.resumePathFollowing();
-                    while (aimTimer.milliseconds() < 2100) {
-                        LLResult result = limelight.getLatestResult();
-                        distance = distancem(result.getTa());
-                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
-                        //speed = (4.4 * distance) + 740;
-                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
-                        Pose3D botpose = result.getBotpose();
-                        aimTimer.startTime();
-                        TiltControl.setPosition(.35);
-                        if (RightOuttake.getVelocity() > speed + 25) {
-                            RightOuttake.setVelocity(0);
-                        } else if (RightOuttake.getVelocity() < speed - 25) {
-                            RightOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            RightOuttake.setVelocity(speed);
-                        }
-
-                        if (LeftOuttake.getVelocity() > speed + 25) {
-                            LeftOuttake.setVelocity(0);
-                        } else if (LeftOuttake.getVelocity() < speed - 25) {
-                            LeftOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            LeftOuttake.setVelocity(speed);
-                        }
-
-                    }
+                    Pusher.setPosition(0.1);
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
                     helper3.setPower(0);
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
-                    Pusher.setPosition(0.47);
                     follower.followPath(paths.Path2);
 
                     pathState++;
                     break;
 
                 case 2:
+                    Intake.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    BottomRampServo.setPower(-1);
+                    helper3.setPower(1);
                     follower.followPath(paths.Path3);
+                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
 
                 case 3:
                     follower.followPath(paths.Path4);
+                    BottomRampServo2.setPower(0);
+                    BottomRampServo.setPower(0);
+                    helper3.setPower(0);
                     TiltControl.setPosition(0.36);
                     pathState++;
                     break;
@@ -401,13 +411,11 @@ public class BlueAutoLimelight extends OpMode {
                 case 6:
 
                     follower.followPath(paths.Path7);
-                    Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
@@ -448,48 +456,23 @@ public class BlueAutoLimelight extends OpMode {
                             rightFront.setPower(0);
                             rightBack.setPower(0);
                             align = true;
+                            Thread.sleep(200);
                         }
                     }
                     follower.resumePathFollowing();
-                    while (aimTimer.milliseconds() < 2100) {
-                        LLResult result = limelight.getLatestResult();
-                        distance = distancem(result.getTa());
-                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
-                        //speed = (4.4 * distance) + 740;
-                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
-                        Pose3D botpose = result.getBotpose();
-                        aimTimer.startTime();
-                        TiltControl.setPosition(.35);
-                        if (RightOuttake.getVelocity() > speed + 25) {
-                            RightOuttake.setVelocity(0);
-                        } else if (RightOuttake.getVelocity() < speed - 25) {
-                            RightOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            RightOuttake.setVelocity(speed);
-                        }
-
-                        if (LeftOuttake.getVelocity() > speed + 25) {
-                            LeftOuttake.setVelocity(0);
-                        } else if (LeftOuttake.getVelocity() < speed - 25) {
-                            LeftOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            LeftOuttake.setVelocity(speed);
-                        }
-
-                    }
+                    Pusher.setPosition(0.1);
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
                     helper3.setPower(0);
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
-                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
 
                 case 7:
-
+                    Intake.setPower(-1);
                     follower.followPath(paths.Path8);
-
+                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
                 case 8:
@@ -498,6 +481,9 @@ public class BlueAutoLimelight extends OpMode {
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     follower.followPath(paths.Path9);
+                    BottomRampServo2.setPower(0);
+                    BottomRampServo.setPower(0);
+                    helper3.setPower(0);
                     pathState++;
                     break;
                 case 9:
@@ -506,13 +492,11 @@ public class BlueAutoLimelight extends OpMode {
                     break;
                 case 10:
                     follower.followPath(paths.Path10);
-                    Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
@@ -553,46 +537,22 @@ public class BlueAutoLimelight extends OpMode {
                             rightFront.setPower(0);
                             rightBack.setPower(0);
                             align = true;
+                            Thread.sleep(200);
                         }
                     }
+                    Pusher.setPosition(0.1);
                     follower.resumePathFollowing();
-                    while (aimTimer.milliseconds() < 2100) {
-                        LLResult result = limelight.getLatestResult();
-                        distance = distancem(result.getTa());
-                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
-                        //speed = (4.4 * distance) + 740;
-                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
-                        Pose3D botpose = result.getBotpose();
-                        aimTimer.startTime();
-                        TiltControl.setPosition(.35);
-                        if (RightOuttake.getVelocity() > speed + 25) {
-                            RightOuttake.setVelocity(0);
-                        } else if (RightOuttake.getVelocity() < speed - 25) {
-                            RightOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            RightOuttake.setVelocity(speed);
-                        }
-
-                        if (LeftOuttake.getVelocity() > speed + 25) {
-                            LeftOuttake.setVelocity(0);
-                        } else if (LeftOuttake.getVelocity() < speed - 25) {
-                            LeftOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            LeftOuttake.setVelocity(speed);
-                        }
-
-                    }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
                     helper3.setPower(0);
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
-                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
                 case 11:
+                    Intake.setPower(-1);
                     follower.followPath(paths.Path11);
-
+                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
                 case 12:
@@ -601,23 +561,25 @@ public class BlueAutoLimelight extends OpMode {
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
                     follower.followPath(paths.Path12);
+                    BottomRampServo2.setPower(0);
+                    BottomRampServo.setPower(0);
+                    helper3.setPower(0);
                     pathState++;
                     break;
                 case 13:
 
-                    Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
 
                     helper3.setPower(1);
                     align = false;
                     follower.pausePathFollowing();
+                    Pusher.setPosition(0.1);
                     while(!align) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
@@ -653,46 +615,21 @@ public class BlueAutoLimelight extends OpMode {
                             rightFront.setPower(0);
                             rightBack.setPower(0);
                             align = true;
+                            Thread.sleep(200);
                         }
                     }
                     follower.resumePathFollowing();
-                    while (aimTimer.milliseconds() < 2100) {
-                        LLResult result = limelight.getLatestResult();
-                        distance = distancem(result.getTa());
-                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
-                        //speed = (4.4 * distance) + 740;
-                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
-                        Pose3D botpose = result.getBotpose();
-                        aimTimer.startTime();
-                        TiltControl.setPosition(.35);
-                        if (RightOuttake.getVelocity() > speed + 25) {
-                            RightOuttake.setVelocity(0);
-                        } else if (RightOuttake.getVelocity() < speed - 25) {
-                            RightOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            RightOuttake.setVelocity(speed);
-                        }
-
-                        if (LeftOuttake.getVelocity() > speed + 25) {
-                            LeftOuttake.setVelocity(0);
-                        } else if (LeftOuttake.getVelocity() < speed - 25) {
-                            LeftOuttake.setVelocity(speed + (speed * speedx));
-                        } else {
-                            LeftOuttake.setVelocity(speed);
-                        }
-
-                    }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
                     helper3.setPower(0);
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
-                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
 
                 case 14:
                     follower.followPath(paths.Path14);
+                    Pusher.setPosition(0.47);
                     pathState++;
                     break;
             }
