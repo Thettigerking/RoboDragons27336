@@ -58,7 +58,7 @@ public class ColorSensorTest extends OpMode {
         }
 
         if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 22){
-            if(detectedColor != null & detectedColor.equals("pruple") & P == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -78,7 +78,7 @@ public class ColorSensorTest extends OpMode {
                 P = false;
                 G = true;
             }
-            if(detectedColor != null & detectedColor.equals("green") & G == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.GREEN & G == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -99,7 +99,7 @@ public class ColorSensorTest extends OpMode {
                G = false;
             }
         } else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 23) {
-            if(detectedColor != null & detectedColor.equals("pruple") & P == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -119,7 +119,7 @@ public class ColorSensorTest extends OpMode {
                P = false;
                P2 = true;
             }
-            if(detectedColor != null & detectedColor.equals("purple") & P2 == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P2 == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -139,7 +139,7 @@ public class ColorSensorTest extends OpMode {
                 P2 = false;
                 G = true;
             }
-            if(detectedColor != null & detectedColor.equals("green") & G == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.GREEN & G == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -160,7 +160,7 @@ public class ColorSensorTest extends OpMode {
                 P = true;
             }
         }else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 21) {
-            if(detectedColor != null & detectedColor.equals("pruple") & G2 == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.GREEN & G2 == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -178,9 +178,9 @@ public class ColorSensorTest extends OpMode {
                 helper3.setPower(0);
 
                 G2 = false;
-                G = true;
+                P = true;
             }
-            if(detectedColor != null & detectedColor.equals("purple") & G == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
@@ -197,10 +197,10 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(0);
                 helper3.setPower(0);
 
-                G = false;
+                P = false;
                 P2 = true;
             }
-            if(detectedColor != null & detectedColor.equals("green") & P2 == true) {
+            if(detectedColor != null & detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P2 == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
