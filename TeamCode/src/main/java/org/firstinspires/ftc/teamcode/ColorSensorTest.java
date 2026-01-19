@@ -64,6 +64,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
@@ -77,6 +83,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
@@ -93,6 +105,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
@@ -107,6 +125,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
@@ -120,6 +144,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
@@ -136,6 +166,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
@@ -150,6 +186,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
 
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
@@ -163,6 +205,12 @@ public class ColorSensorTest extends OpMode {
                 BottomRampServo.setPower(RAMP_POWER);
                 BottomRampServo2.setPower(RAMP_POWER);
                 helper3.setPower(-RAMP_POWER);
+
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 Intake.setPower(0);
                 BottomRampServo.setPower(0);
