@@ -20,12 +20,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Blue Auto Testing", group = "Autonomous")
 @Configurable // Panels
 public class BlueAutoLimelight extends OpMode {
-    private double outtakespeed = -890;
+    private double outtakespeed = 890;
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
     private Servo Pusher, TiltControl;
@@ -33,6 +34,12 @@ public class BlueAutoLimelight extends OpMode {
     private Limelight3A limelight;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
 
+    //_____________________________________________________
+    private double distance;
+    private double speed;
+    private double speedx;
+
+    private boolean align = false;
     private ElapsedTime aimTimer = new ElapsedTime();
 
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
@@ -68,16 +75,35 @@ public class BlueAutoLimelight extends OpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         limelight.pipelineSwitch(0);
+        RightOuttake.setVelocityPIDFCoefficients(
+                8.0,   // P
+                0.0,    // I
+                0.6,    // D
+                13.5    // F (THIS MATTERS)
+        );
 
+        LeftOuttake.setVelocityPIDFCoefficients(
+                8.0,
+                0.0,
+                0.6,
+                13.5
+        );
         RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        limelight.pipelineSwitch(0);
+        limelight.start();
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
     }
 
     @Override
     public void loop() {
+        LLResult result = limelight.getLatestResult();
+
+        LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
+        RightOuttake.setDirection(DcMotor.Direction.REVERSE);
         follower.update(); // Update Pedro Pathing
         try {
             pathState = autonomousPathUpdate(); // Update autonomous state machine
@@ -90,6 +116,7 @@ public class BlueAutoLimelight extends OpMode {
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        telemetry.addData("Ta:",result.getTa());
         panelsTelemetry.update(telemetry);
     }
 
@@ -125,17 +152,17 @@ public class BlueAutoLimelight extends OpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(25, 131), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(25, 131), new Pose(54.000, 90.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(312))
+                    .setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(318))
                     .build();
 
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 84.000))
+                            new BezierLine(new Pose(54.000, 90.000), new Pose(48.000, 84.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(318), Math.toRadians(180))
                     .build();
 
             Path3 = follower
@@ -165,17 +192,17 @@ public class BlueAutoLimelight extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(16.750, 75.000), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(16.750, 75.000), new Pose(54.000, 90.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(306))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(312))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 61))
+                            new BezierLine(new Pose(54.000, 90.000), new Pose(48.000, 61))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(306), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(180))
                     .build();
 
             Path8 = follower
@@ -196,7 +223,7 @@ public class BlueAutoLimelight extends OpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 61), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(20, 61), new Pose(54.000, 90.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(326))
                     .build();
@@ -204,7 +231,7 @@ public class BlueAutoLimelight extends OpMode {
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(41.000, 36.500))
+                            new BezierLine(new Pose(54.000, 90.000), new Pose(41.000, 36.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(326), Math.toRadians(180))
                     .build();
@@ -220,16 +247,16 @@ public class BlueAutoLimelight extends OpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(8, 36.500), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(8, 36.500), new Pose(54.000, 90.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(322))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(326))
                     .build();
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48, 96), new Pose(24, 88.000))
+                            new BezierLine(new Pose(54, 90), new Pose(24, 88.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(322), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(326), Math.toRadians(90))
                     .build();
 
         }
@@ -255,7 +282,7 @@ public class BlueAutoLimelight extends OpMode {
                     pathState++;
                     break;
                 case 1:
-
+                    align = false;
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
@@ -266,21 +293,69 @@ public class BlueAutoLimelight extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1550);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-350);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.5;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
                         }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1550);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-350);
+                    }
+                    follower.resumePathFollowing();
+                    while (aimTimer.milliseconds() < 2100) {
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
+                        Pose3D botpose = result.getBotpose();
+                        aimTimer.startTime();
+                        TiltControl.setPosition(.35);
+                        if (RightOuttake.getVelocity() > speed + 25) {
+                            RightOuttake.setVelocity(0);
+                        } else if (RightOuttake.getVelocity() < speed - 25) {
+                            RightOuttake.setVelocity(speed + (speed * speedx));
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(speed);
+                        }
+
+                        if (LeftOuttake.getVelocity() > speed + 25) {
+                            LeftOuttake.setVelocity(0);
+                        } else if (LeftOuttake.getVelocity() < speed - 25) {
+                            LeftOuttake.setVelocity(speed + (speed * speedx));
+                        } else {
+                            LeftOuttake.setVelocity(speed);
                         }
 
                     }
@@ -336,21 +411,69 @@ public class BlueAutoLimelight extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1550);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-350);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.2;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
                         }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1550);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-350);
+                    }
+                    follower.resumePathFollowing();
+                    while (aimTimer.milliseconds() < 2100) {
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
+                        Pose3D botpose = result.getBotpose();
+                        aimTimer.startTime();
+                        TiltControl.setPosition(.35);
+                        if (RightOuttake.getVelocity() > speed + 25) {
+                            RightOuttake.setVelocity(0);
+                        } else if (RightOuttake.getVelocity() < speed - 25) {
+                            RightOuttake.setVelocity(speed + (speed * speedx));
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(speed);
+                        }
+
+                        if (LeftOuttake.getVelocity() > speed + 25) {
+                            LeftOuttake.setVelocity(0);
+                        } else if (LeftOuttake.getVelocity() < speed - 25) {
+                            LeftOuttake.setVelocity(speed + (speed * speedx));
+                        } else {
+                            LeftOuttake.setVelocity(speed);
                         }
 
                     }
@@ -393,21 +516,69 @@ public class BlueAutoLimelight extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1550);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-350);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.5;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
                         }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1550);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-350);
+                    }
+                    follower.resumePathFollowing();
+                    while (aimTimer.milliseconds() < 2100) {
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
+                        Pose3D botpose = result.getBotpose();
+                        aimTimer.startTime();
+                        TiltControl.setPosition(.35);
+                        if (RightOuttake.getVelocity() > speed + 25) {
+                            RightOuttake.setVelocity(0);
+                        } else if (RightOuttake.getVelocity() < speed - 25) {
+                            RightOuttake.setVelocity(speed + (speed * speedx));
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(speed);
+                        }
+
+                        if (LeftOuttake.getVelocity() > speed + 25) {
+                            LeftOuttake.setVelocity(0);
+                        } else if (LeftOuttake.getVelocity() < speed - 25) {
+                            LeftOuttake.setVelocity(speed + (speed * speedx));
+                        } else {
+                            LeftOuttake.setVelocity(speed);
                         }
 
                     }
@@ -445,21 +616,69 @@ public class BlueAutoLimelight extends OpMode {
                     BottomRampServo2.setPower(-1);
 
                     helper3.setPower(1);
-                    while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1550);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-350);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.5;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
                         }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1550);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-350);
+                    }
+                    follower.resumePathFollowing();
+                    while (aimTimer.milliseconds() < 2100) {
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 850.7619;
+                        Pose3D botpose = result.getBotpose();
+                        aimTimer.startTime();
+                        TiltControl.setPosition(.35);
+                        if (RightOuttake.getVelocity() > speed + 25) {
+                            RightOuttake.setVelocity(0);
+                        } else if (RightOuttake.getVelocity() < speed - 25) {
+                            RightOuttake.setVelocity(speed + (speed * speedx));
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(speed);
+                        }
+
+                        if (LeftOuttake.getVelocity() > speed + 25) {
+                            LeftOuttake.setVelocity(0);
+                        } else if (LeftOuttake.getVelocity() < speed - 25) {
+                            LeftOuttake.setVelocity(speed + (speed * speedx));
+                        } else {
+                            LeftOuttake.setVelocity(speed);
                         }
 
                     }
@@ -480,5 +699,8 @@ public class BlueAutoLimelight extends OpMode {
         }
         return pathState;
     }
-
+    public double distancem(double x) {
+        double AprilTagDistance = Math.pow((x/2604.88382),-0.5367);
+        return AprilTagDistance;
+    }
 }

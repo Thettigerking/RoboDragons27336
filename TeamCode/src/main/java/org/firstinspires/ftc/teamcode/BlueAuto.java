@@ -68,6 +68,7 @@ public class BlueAuto extends OpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         limelight.pipelineSwitch(0);
+        limelight.start();
 
         RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

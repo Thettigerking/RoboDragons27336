@@ -66,7 +66,6 @@ public class RoboMain extends LinearOpMode {
     public void runOpMode() {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        limelight.pipelineSwitch(0);
 
 
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
