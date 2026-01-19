@@ -19,7 +19,7 @@ public class ColorSensorDetection {
     }
 
     public void init(HardwareMap hwMap){
-        colorSensor = hwMap.get(NormalizedColorSensor.class, "RevColorSensor");
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "ColorSensor");
         colorSensor.setGain(50);
     }
 
@@ -34,27 +34,6 @@ public class ColorSensorDetection {
         telemetry.addData("red", normRed);
         telemetry.addData("green", normGreen);
         telemetry.addData("blue", normBlue);
-
-           /*
-        RED:>0.9, <0.4, <0.2
-        BLUE:0.8, 1.6, 1.5
-        GREEN:0.5, 1.4, 0.8
-        PURPLE:0.6, 1.4, 1.7, 1.9
-         */
-
-        /*
-        if(normRed > 0.9 && normGreen > 0.4 && normBlue > 0.2) {
-            return DetectedColor.RED;
-        }else if(normRed < 0.8 && normGreen < 1.6 && normBlue > 1.5) {
-            return DetectedColor.BLUE;
-        }else if(normRed < 0.5 && normGreen > 0.9 && normBlue < 0.7) {
-            return DetectedColor.GREEN;
-        }else if(normRed > 0.6 && normGreen < 1.7 && normBlue > 1.9){
-            return DetectedColor.PURPLE;
-        }else{
-            return DetectedColor.UNKNOWN;
-        }
-         */
 
         if(normGreen > normRed && normGreen > normBlue && normGreen > 1.3
         ) {
