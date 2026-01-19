@@ -57,7 +57,7 @@ public class ColorSensorTest extends OpMode {
             telemetry.addData("Target Area", llResult.getTa());
         }
 
-        if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 0){
+        if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 22){
             if(detectedColor != null & detectedColor.equals("pruple") & P == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
@@ -98,7 +98,7 @@ public class ColorSensorTest extends OpMode {
                P = true;
                G = false;
             }
-        } else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 2) {
+        } else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 23) {
             if(detectedColor != null & detectedColor.equals("pruple") & P == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
@@ -159,7 +159,7 @@ public class ColorSensorTest extends OpMode {
                 G = false;
                 P = true;
             }
-        }else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 3) {
+        }else if(llResult != null & llResult.isValid() & llResult.getPipelineIndex() == 21) {
             if(detectedColor != null & detectedColor.equals("pruple") & G2 == true) {
                 Intake.setPower(INTAKE_POWER);
                 BottomRampServo.setPower(RAMP_POWER);
