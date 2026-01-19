@@ -303,7 +303,7 @@ public class BlueAutoLimelight extends OpMode {
                         double kP = 0.02;             // proportional gain
                         double minPower = 0.08;       // minimum turn power
                         double maxPower = 0.30;       // max turn power
-                        double deadband = 0.5;        // degrees allowed error
+                        double deadband = 0.1;        // degrees allowed error
 
                         if (Math.abs(tx) > deadband) {
 
@@ -421,7 +421,7 @@ public class BlueAutoLimelight extends OpMode {
                         double kP = 0.02;             // proportional gain
                         double minPower = 0.08;       // minimum turn power
                         double maxPower = 0.30;       // max turn power
-                        double deadband = 0.2;        // degrees allowed error
+                        double deadband = 0.1;        // degrees allowed error
 
                         if (Math.abs(tx) > deadband) {
 
@@ -526,7 +526,7 @@ public class BlueAutoLimelight extends OpMode {
                         double kP = 0.02;             // proportional gain
                         double minPower = 0.08;       // minimum turn power
                         double maxPower = 0.30;       // max turn power
-                        double deadband = 0.5;        // degrees allowed error
+                        double deadband = 0.1;        // degrees allowed error
 
                         if (Math.abs(tx) > deadband) {
 
@@ -626,7 +626,7 @@ public class BlueAutoLimelight extends OpMode {
                         double kP = 0.02;             // proportional gain
                         double minPower = 0.08;       // minimum turn power
                         double maxPower = 0.30;       // max turn power
-                        double deadband = 0.5;        // degrees allowed error
+                        double deadband = 0.1;        // degrees allowed error
 
                         if (Math.abs(tx) > deadband) {
 
