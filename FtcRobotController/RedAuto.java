@@ -12,7 +12,6 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Red Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class RedAuto extends LinearOpMode {
+public class RedAuto extends OpMode {
 
     private double outtakespeed = -890;
     private DcMotor Intake;
@@ -44,13 +43,12 @@ public class RedAuto extends LinearOpMode {
     private Paths paths; // Paths defined in the Paths class
 
     //131
-//131
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)).mirror());
+        follower.setStartingPose(new Pose(25, 131, Math.toRadians(324)).mirror());
 
         paths = new Paths(follower); // Build paths
         Intake = hardwareMap.get(DcMotor.class, "Intake");
@@ -74,35 +72,29 @@ public class RedAuto extends LinearOpMode {
 
         limelight.pipelineSwitch(0);
 
-        limelight.start();
         RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
+    }
 
-        waitForStart();
-        while(opModeInInit()){
-            follower.updatePose();
+    @Override
+    public void loop() {
+
+        follower.update(); // Update Pedro Pathing
+        try {
+            pathState = autonomousPathUpdate(); // Update autonomous state machine
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        while(opModeIsActive()) {
 
-
-            follower.update(); // Update Pedro Pathing
-            try {
-                pathState = autonomousPathUpdate(); // Update autonomous state machine
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            // Log values to Panels and Driver Station
-            panelsTelemetry.debug("Path State", pathState);
-            panelsTelemetry.debug("X", follower.getPose().getX());
-            panelsTelemetry.debug("Y", follower.getPose().getY());
-            panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-            panelsTelemetry.update(telemetry);
-
-        }
+        // Log values to Panels and Driver Station
+        panelsTelemetry.debug("Path State", pathState);
+        panelsTelemetry.debug("X", follower.getPose().getX());
+        panelsTelemetry.debug("Y", follower.getPose().getY());
+        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        panelsTelemetry.update(telemetry);
     }
 
     public static class Paths {
@@ -123,23 +115,8 @@ public class RedAuto extends LinearOpMode {
         public PathChain Path13;
 
         public PathChain Path14;
-        public PathChain Path15;
 
         public Paths(Follower follower) {
-            initPaths(follower);
-        }
-
-        public void initPaths(Follower follower) {
-            Pose posevalue = follower.getPose();
-
-            Path15 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(posevalue, new Pose(25, 131).mirror())
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(follower.getHeading()), Math.toRadians(317-90))
-                    .build();
-
 
             Path1 = follower
                     .pathBuilder()
@@ -160,7 +137,7 @@ public class RedAuto extends LinearOpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 88.000-2).mirror(), new Pose(17, 86.000-2).mirror())
+                            new BezierLine(new Pose(48.000, 88.000-2).mirror(), new Pose(18, 88.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -168,7 +145,7 @@ public class RedAuto extends LinearOpMode {
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17, 86.000-2).mirror(), new Pose(35.000, 86.000-2).mirror())
+                            new BezierLine(new Pose(18, 88.000-2).mirror(), new Pose(35.000, 88.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(90+180))
                     .build();
@@ -176,7 +153,7 @@ public class RedAuto extends LinearOpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 86.000-2).mirror(), new Pose(14.000, 79.000-2).mirror())
+                            new BezierLine(new Pose(35.000, 88.000-2).mirror(), new Pose(17.000, 79.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(90+180))
                     .build();
@@ -184,7 +161,7 @@ public class RedAuto extends LinearOpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(14.000, 79.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(17.000, 79.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(314-90))
                     .build();
@@ -200,14 +177,14 @@ public class RedAuto extends LinearOpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(54.000, 65-2).mirror(), new Pose(9.5000, 60-2).mirror())
+                            new BezierLine(new Pose(54.000, 65-2).mirror(), new Pose(11.5000, 61.5-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 60-2).mirror(), new Pose(20, 63-2).mirror())
+                            new BezierLine(new Pose(11.5, 61.5-2).mirror(), new Pose(20, 63-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -231,7 +208,7 @@ public class RedAuto extends LinearOpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(9.5, 40.500-2).mirror())
+                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(14, 40.500-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -239,7 +216,7 @@ public class RedAuto extends LinearOpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(14, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(319-90))
 
@@ -261,14 +238,8 @@ public class RedAuto extends LinearOpMode {
         if (!follower.isBusy()) {
             switch (pathState) {
 
+
                 case 0:
-                    paths.initPaths(follower);
-
-                    follower.followPath(paths.Path15);
-                    pathState = 1;
-                    break;
-
-                case 1:
 
                     TiltControl.setPosition(0.4);
                     Pusher.setPosition(0.47);
@@ -279,9 +250,9 @@ public class RedAuto extends LinearOpMode {
                     Intake.setPower(-1);
                     follower.followPath(paths.Path1);
 
-                    pathState = 2;
+                    pathState++;
                     break;
-                case 2:
+                case 1:
                     align = false;
                     Pusher.setPosition(0.1);
                     try {
@@ -332,14 +303,14 @@ public class RedAuto extends LinearOpMode {
                         if (RightOuttake.getVelocity() > outtakespeed) {
                             RightOuttake.setVelocity(-1300);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(0);
+                            RightOuttake.setVelocity(-520);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
                             LeftOuttake.setVelocity(-1300);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(0);
+                            LeftOuttake.setVelocity(-520);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -353,26 +324,26 @@ public class RedAuto extends LinearOpMode {
                     Pusher.setPosition(0.47);
                     follower.followPath(paths.Path2);
 
-                    pathState = 3;
+                    pathState++;
+                    break;
+
+                case 2:
+                    follower.followPath(paths.Path3);
+                    pathState++;
                     break;
 
                 case 3:
-                    follower.followPath(paths.Path3);
-                    pathState = 4;
+                    follower.followPath(paths.Path4);
+                    TiltControl.setPosition(0.36);
+                    pathState++;
                     break;
 
                 case 4:
-                    follower.followPath(paths.Path4);
-                    TiltControl.setPosition(0.36);
-                    pathState = 5;
+                    follower.followPath(paths.Path5);
+                    pathState++;
                     break;
 
                 case 5:
-                    follower.followPath(paths.Path5);
-                    pathState = 6;
-                    break;
-
-                case 6:
 
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
@@ -381,10 +352,10 @@ public class RedAuto extends LinearOpMode {
                     sleep(200);
                     follower.followPath(paths.Path6);
 
-                    pathState = 7;
+                    pathState++;
                     break;
 
-                case 7:
+                case 6:
                     align = false;
                     follower.followPath(paths.Path7);
                     Pusher.setPosition(0.1);
@@ -455,28 +426,28 @@ public class RedAuto extends LinearOpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState = 8;
+                    pathState++;
                     break;
 
-                case 8:
+                case 7:
 
                     follower.followPath(paths.Path8);
 
-                    pathState = 9;
+                    pathState++;
                     break;
-                case 9:
+                case 8:
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     follower.followPath(paths.Path9);
-                    pathState = 10;
+                    pathState++;
+                    break;
+                case 9:
+                    follower.followPath(paths.Path13);
+                    pathState++;
                     break;
                 case 10:
-                    follower.followPath(paths.Path13);
-                    pathState = 11;
-                    break;
-                case 11:
                     follower.followPath(paths.Path10);
                     Pusher.setPosition(0.1);
                     try {
@@ -546,22 +517,22 @@ public class RedAuto extends LinearOpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState = 12;
+                    pathState++;
                     break;
-                case 12:
+                case 11:
                     follower.followPath(paths.Path11);
 
-                    pathState = 13;
+                    pathState++;
                     break;
-                case 13:
+                case 12:
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
                     follower.followPath(paths.Path12);
-                    pathState = 14;
+                    pathState++;
                     break;
-                case 14:
+                case 13:
 
                     Pusher.setPosition(0.1);
                     try {
@@ -631,12 +602,12 @@ public class RedAuto extends LinearOpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState = 15;
+                    pathState++;
                     break;
 
-                case 15:
+                case 14:
                     follower.followPath(paths.Path14);
-                    pathState = 16;
+                    pathState++;
                     break;
             }
         }

@@ -29,7 +29,7 @@ public class BlueGoalCloseNew extends OpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
-    private Paths paths; // Paths defined in the Paths class
+    private BlueGoalCloseNew.Paths paths; // Paths defined in the Paths class
 
     @Override
     public void init() {
