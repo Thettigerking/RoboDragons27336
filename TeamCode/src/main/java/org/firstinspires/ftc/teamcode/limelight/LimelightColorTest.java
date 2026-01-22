@@ -60,10 +60,18 @@ public class LimelightColorTest extends OpMode {
         int id = llResult.getFiducialResults().get(0).getFiducialId();
 
         if(id == 21) {
-            telemetry.addLine("GPP");
+            GPP = true;
         }else if(id == 22) {
-            telemetry.addLine("PGP");
+            PGP = true;
         }else if(id == 23){
+            PPG = true;
+        }
+
+        if(GPP == true) {
+            telemetry.addLine("GPP");
+        }else if(PGP == true) {
+            telemetry.addLine("PGP");
+        }else if(PPG == true) {
             telemetry.addLine("PPG");
         }
     }
