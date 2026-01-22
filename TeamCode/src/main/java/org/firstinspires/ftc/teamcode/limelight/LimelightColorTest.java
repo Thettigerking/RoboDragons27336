@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.limelight;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.ColorSensorDetection;
 
-@TeleOp(name = "ColorSensorTest")
+@Autonomous(name = "LimelightColorTest")
 
 public class LimelightColorTest extends OpMode {
     ColorSensorDetection bench = new ColorSensorDetection();
@@ -24,6 +25,13 @@ public class LimelightColorTest extends OpMode {
     boolean GPP = false;
     boolean PGP = false;
     boolean PPG = false;
+    boolean P1 =false;
+    boolean P2 = false;
+    boolean P = true;
+    boolean G1 = false;
+    boolean G2 = false;
+    boolean G = true;
+    int id = 0;
 
     @Override
     public void init() {
@@ -55,16 +63,136 @@ public class LimelightColorTest extends OpMode {
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Target Area", llResult.getTa());
-        }
 
-        int id = llResult.getFiducialResults().get(0).getFiducialId();
+            id = llResult.getFiducialResults().get(0).getFiducialId();
+        }
 
         if(id == 21) {
-            telemetry.addLine("GPP");
+            GPP = true;
         }else if(id == 22) {
-            telemetry.addLine("PGP");
+            PGP = true;
         }else if(id == 23){
-            telemetry.addLine("PPG");
+            PPG = true;
         }
+
+        if(GPP == true) {
+            telemetry.addLine("GPP");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G = false;
+                P1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P1 = false;
+                P2 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P2 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P2 = false;
+                G = true;
+            }
+
+        }else if(PGP == true) {
+            telemetry.addLine("PGP");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P = false;
+                G1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G1 = false;
+                P = true;
+            }
+
+        }else if(PPG == true) {
+            telemetry.addLine("PPG");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P = false;
+                P1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P1 = false;
+                G1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G1 = false;
+                P = true;
+            }
+        }
+    }
+
+    private void IntakeOn() {
+        Intake.setPower(INTAKE_POWER);
+        BottomRampServo.setPower(RAMP_POWER);
+        BottomRampServo2.setPower(RAMP_POWER);
+        helper3.setPower(-RAMP_POWER);
+    }
+
+    private void IntakeOff() {
+        Intake.setPower(0);
+        BottomRampServo.setPower(0);
+        BottomRampServo2.setPower(0);
+        helper3.setPower(0);
     }
 }
