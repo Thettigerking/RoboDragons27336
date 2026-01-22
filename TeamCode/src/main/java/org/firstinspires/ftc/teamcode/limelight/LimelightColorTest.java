@@ -25,7 +25,12 @@ public class LimelightColorTest extends OpMode {
     boolean GPP = false;
     boolean PGP = false;
     boolean PPG = false;
-
+    boolean P1 =false;
+    boolean P2 = false;
+    boolean P = true;
+    boolean G1 = false;
+    boolean G2 = false;
+    boolean G = true;
     int id = 0;
 
     @Override
@@ -72,10 +77,122 @@ public class LimelightColorTest extends OpMode {
 
         if(GPP == true) {
             telemetry.addLine("GPP");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G = false;
+                P1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P1 = false;
+                P2 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P2 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P2 = false;
+                G = true;
+            }
+
         }else if(PGP == true) {
             telemetry.addLine("PGP");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P = false;
+                G1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G1 = false;
+                P = true;
+            }
+
         }else if(PPG == true) {
             telemetry.addLine("PPG");
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P = false;
+                P1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                P1 = false;
+                G1 = true;
+            }
+
+            if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
+                IntakeOn();
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                IntakeOff();
+                G1 = false;
+                P = true;
+            }
         }
+    }
+
+    private void IntakeOn() {
+        Intake.setPower(INTAKE_POWER);
+        BottomRampServo.setPower(RAMP_POWER);
+        BottomRampServo2.setPower(RAMP_POWER);
+        helper3.setPower(-RAMP_POWER);
+    }
+
+    private void IntakeOff() {
+        Intake.setPower(0);
+        BottomRampServo.setPower(0);
+        BottomRampServo2.setPower(0);
+        helper3.setPower(0);
     }
 }
