@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.limelight;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -11,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.ColorSensorDetection;
 
-@TeleOp(name = "ColorSensorTest")
+@Autonomous(name = "LimelightColorTest")
 
 public class LimelightColorTest extends OpMode {
     ColorSensorDetection bench = new ColorSensorDetection();
@@ -24,6 +25,8 @@ public class LimelightColorTest extends OpMode {
     boolean GPP = false;
     boolean PGP = false;
     boolean PPG = false;
+
+    int id = 0;
 
     @Override
     public void init() {
@@ -55,9 +58,9 @@ public class LimelightColorTest extends OpMode {
             telemetry.addData("Tx", llResult.getTx());
             telemetry.addData("Ty", llResult.getTy());
             telemetry.addData("Target Area", llResult.getTa());
-        }
 
-        int id = llResult.getFiducialResults().get(0).getFiducialId();
+            id = llResult.getFiducialResults().get(0).getFiducialId();
+        }
 
         if(id == 21) {
             GPP = true;
