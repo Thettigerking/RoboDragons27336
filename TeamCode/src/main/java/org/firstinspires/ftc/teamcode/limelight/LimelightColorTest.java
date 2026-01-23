@@ -81,7 +81,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -93,7 +93,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -105,7 +105,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P2 == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -120,7 +120,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -132,7 +132,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -147,7 +147,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -159,7 +159,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.PURPLE & P1 == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -171,7 +171,7 @@ public class LimelightColorTest extends OpMode {
             if(detectedColor == ColorSensorDetection.DetectedColor.GREEN & G1 == true){
                 IntakeOn();
                 try {
-                    wait(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
