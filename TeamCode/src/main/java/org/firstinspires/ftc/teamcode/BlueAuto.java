@@ -12,6 +12,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,10 +25,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "Blue Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class BlueAuto extends OpMode {
+public class BlueAuto extends LinearOpMode {
     private double outtakespeed = -890;
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
+    private boolean align = false;
+
     private Servo Pusher, TiltControl;
     private DcMotorEx RightOuttake, LeftOuttake;
     private Limelight3A limelight;
@@ -40,45 +43,49 @@ public class BlueAuto extends OpMode {
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
 //131
-    @Override
-    public void init() {
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+@Override
+public void runOpMode() throws InterruptedException {
 
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)));
+    panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+    follower = Constants.createFollower(hardwareMap);
+    follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)));
 
-        paths = new Paths(follower); // Build paths
-        Intake = hardwareMap.get(DcMotor.class, "Intake");
-        BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
-        BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
-        helper3 = hardwareMap.get(CRServo.class, "helper3");
+    paths = new Paths(follower); // Build paths
+    Intake = hardwareMap.get(DcMotor.class, "Intake");
+    BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
+    BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
+    helper3 = hardwareMap.get(CRServo.class, "helper3");
 
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
-        rightFront= hardwareMap.get(DcMotor.class, "rightFront");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+    leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+    leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
+    rightFront= hardwareMap.get(DcMotor.class, "rightFront");
+    rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
-        Pusher  = hardwareMap.get(Servo.class, "Pusher");
-        TiltControl = hardwareMap.get(Servo.class, "TiltControl");
+    Pusher  = hardwareMap.get(Servo.class, "Pusher");
+    TiltControl = hardwareMap.get(Servo.class, "TiltControl");
 
-        RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
-        LeftOuttake  = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
+    RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
+    LeftOuttake  = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
 
-        LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+    LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+    limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        limelight.pipelineSwitch(0);
-        limelight.start();
+    limelight.pipelineSwitch(0);
 
-        RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
+    limelight.start();
+    RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+    panelsTelemetry.debug("Status", "Initialized");
+    panelsTelemetry.update(telemetry);
+
+    waitForStart();
+    while(opModeInInit()){
+        follower.updatePose();
     }
+    while(opModeIsActive()) {
 
-    @Override
-    public void loop() {
+
         follower.update(); // Update Pedro Pathing
         try {
             pathState = autonomousPathUpdate(); // Update autonomous state machine
@@ -92,7 +99,9 @@ public class BlueAuto extends OpMode {
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", follower.getPose().getHeading());
         panelsTelemetry.update(telemetry);
+
     }
+}
 
     public static class Paths {
 
@@ -116,21 +125,22 @@ public class BlueAuto extends OpMode {
         public PathChain Path15;
 
         public Paths(Follower follower) {
-            Path15 =  follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(8.5, 8.5), new Pose(25, 131))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(324))
-                    .build();
+            Pose posevalue = follower.getPose();
+            Double headingvalue = follower.getHeading();
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(25, 131), new Pose(48.000, 96.000))
+                            new BezierLine(posevalue, new Pose(48.000, 106))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(324), Math.toRadians(312))
+                    .setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(312))
                     .build();
-
+            Path15 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(48.000, 106), new Pose(48.000, 96))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(312))
+                    .build();
             Path2 = follower
                     .pathBuilder()
                     .addPath(
@@ -142,7 +152,7 @@ public class BlueAuto extends OpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 83.000), new Pose(15, 83.000))
+                            new BezierLine(new Pose(48.000, 83.000), new Pose(13, 83.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -150,7 +160,7 @@ public class BlueAuto extends OpMode {
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15, 83.000), new Pose(35.000, 79.000))
+                            new BezierLine(new Pose(13, 83.000), new Pose(35.000, 79.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                     .build();
@@ -158,7 +168,7 @@ public class BlueAuto extends OpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 79.000), new Pose(17.750, 74.000))
+                            new BezierLine(new Pose(35.000, 79.000), new Pose(15.50, 74.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -166,7 +176,7 @@ public class BlueAuto extends OpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17.750, 74.000), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(15.50, 74.000), new Pose(48.000, 96.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(306))
                     .build();
@@ -182,14 +192,14 @@ public class BlueAuto extends OpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 60), new Pose(7.5000, 58))
+                            new BezierLine(new Pose(48.000, 60), new Pose(8.5000, 58))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(7.5, 58), new Pose(20, 60))
+                            new BezierLine(new Pose(8.5, 58), new Pose(20, 60))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -213,7 +223,7 @@ public class BlueAuto extends OpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 37.500), new Pose(9, 37.500))
+                            new BezierLine(new Pose(41.000, 37.500), new Pose(8.5, 37.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -221,7 +231,7 @@ public class BlueAuto extends OpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9, 37.500), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(8.5, 37.500), new Pose(48.000, 96.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(322))
                     .build();
@@ -240,8 +250,6 @@ public class BlueAuto extends OpMode {
 
         if (!follower.isBusy()) {
             switch (pathState) {
-
-
                 case 0:
 
                     TiltControl.setPosition(0.4);
@@ -253,9 +261,14 @@ public class BlueAuto extends OpMode {
                     Intake.setPower(-1);
                     follower.followPath(paths.Path1);
 
-                    pathState++;
+                    pathState = 1;
                     break;
                 case 1:
+                    follower.followPath(paths.Path15);
+
+                    pathState = 2;
+                    break;
+                case 2:
 
                     Pusher.setPosition(0.1);
                     try {
@@ -263,6 +276,46 @@ public class BlueAuto extends OpMode {
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    follower.resumePathFollowing();
                     aimTimer.reset();
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
@@ -293,26 +346,26 @@ public class BlueAuto extends OpMode {
                     Pusher.setPosition(0.47);
                     follower.followPath(paths.Path2);
 
-                    pathState++;
-                    break;
-
-                case 2:
-                    follower.followPath(paths.Path3);
-                    pathState++;
+                    pathState = 3;
                     break;
 
                 case 3:
-                    follower.followPath(paths.Path4);
-                    TiltControl.setPosition(0.36);
-                    pathState++;
+                    follower.followPath(paths.Path3);
+                    pathState = 4;
                     break;
 
                 case 4:
-                    follower.followPath(paths.Path5);
-                    pathState++;
+                    follower.followPath(paths.Path4);
+                    TiltControl.setPosition(0.36);
+                    pathState = 5;
                     break;
 
                 case 5:
+                    follower.followPath(paths.Path5);
+                    pathState = 6;
+                    break;
+
+                case 6:
 
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
@@ -321,10 +374,10 @@ public class BlueAuto extends OpMode {
                     sleep(1000);
                     follower.followPath(paths.Path6);
 
-                    pathState++;
+                    pathState = 7;
                     break;
 
-                case 6:
+                case 7:
 
                     follower.followPath(paths.Path7);
                     Pusher.setPosition(0.1);
@@ -337,6 +390,46 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -361,28 +454,28 @@ public class BlueAuto extends OpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState++;
+                    pathState = 8;
                     break;
 
-                case 7:
+                case 8:
 
                     follower.followPath(paths.Path8);
 
-                    pathState++;
+                    pathState = 9;
                     break;
-                case 8:
+                case 9:
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     follower.followPath(paths.Path9);
-                    pathState++;
-                    break;
-                case 9:
-                    follower.followPath(paths.Path13);
-                    pathState++;
+                    pathState = 10;
                     break;
                 case 10:
+                    follower.followPath(paths.Path13);
+                    pathState = 11;
+                    break;
+                case 11:
                     follower.followPath(paths.Path10);
                     Pusher.setPosition(0.1);
                     try {
@@ -394,6 +487,46 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -418,22 +551,22 @@ public class BlueAuto extends OpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState++;
-                    break;
-                case 11:
-                    follower.followPath(paths.Path11);
-
-                    pathState++;
+                    pathState = 12;
                     break;
                 case 12:
+                    follower.followPath(paths.Path11);
+
+                    pathState = 13;
+                    break;
+                case 13:
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-880);
                     //LeftOuttake.setVelocity(-880);
                     follower.followPath(paths.Path12);
-                    pathState++;
+                    pathState = 14;
                     break;
-                case 13:
+                case 14:
 
                     Pusher.setPosition(0.1);
                     try {
@@ -445,6 +578,46 @@ public class BlueAuto extends OpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
+                        LLResult result = limelight.getLatestResult();
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -469,10 +642,10 @@ public class BlueAuto extends OpMode {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
-                    pathState++;
+                    pathState = 15;
                     break;
 
-                case 14:
+                case 15:
                     follower.followPath(paths.Path14);
                     pathState++;
                     break;

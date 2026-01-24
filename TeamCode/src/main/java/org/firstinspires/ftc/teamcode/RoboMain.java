@@ -88,7 +88,7 @@ public class RoboMain extends LinearOpMode {
         boolean timerStarted = false;
         boolean timerStarteda = false;
 
-
+        limelight.pipelineSwitch(0);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);

@@ -123,36 +123,33 @@ public class RedAuto extends LinearOpMode {
         public PathChain Path13;
 
         public PathChain Path14;
-        public PathChain Path15;
 
+        public PathChain Path15;
         public Paths(Follower follower) {
             initPaths(follower);
         }
 
         public void initPaths(Follower follower) {
             Pose posevalue = follower.getPose();
-
-            Path15 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(posevalue, new Pose(25, 131).mirror())
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(follower.getHeading()), Math.toRadians(317-90))
-                    .build();
-
-
+            Double headingvalue = follower.getHeading();
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(25, 131).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(posevalue, new Pose(48.000, 106).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(324+180), Math.toRadians(317-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(317-90))
                     .build();
-
+            Path15 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(48.000, 106).mirror(), new Pose(48.000, 96).mirror())
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(317-90), Math.toRadians(317-90))
+                    .build();
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(48.000, 88.000-2).mirror())
+                            new BezierLine(new Pose(48.000, 96.000).mirror(), new Pose(48.000, 85.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(317-90), Math.toRadians(180+180))
                     .build();
@@ -160,7 +157,7 @@ public class RedAuto extends LinearOpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 88.000-2).mirror(), new Pose(17, 86.000-2).mirror())
+                            new BezierLine(new Pose(48.000, 85.000-2).mirror(), new Pose(15, 85.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -168,7 +165,7 @@ public class RedAuto extends LinearOpMode {
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(17, 86.000-2).mirror(), new Pose(35.000, 86.000-2).mirror())
+                            new BezierLine(new Pose(15, 85.000-2).mirror(), new Pose(35.000, 85.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(90+180))
                     .build();
@@ -176,7 +173,7 @@ public class RedAuto extends LinearOpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 86.000-2).mirror(), new Pose(14.000, 79.000-2).mirror())
+                            new BezierLine(new Pose(35.000, 85.000-2).mirror(), new Pose(14.000, 77.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(90+180))
                     .build();
@@ -184,7 +181,7 @@ public class RedAuto extends LinearOpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(14.000, 79.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(14.000, 77.000-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90+180), Math.toRadians(314-90))
                     .build();
@@ -200,14 +197,14 @@ public class RedAuto extends LinearOpMode {
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(54.000, 65-2).mirror(), new Pose(9.5000, 60-2).mirror())
+                            new BezierLine(new Pose(54.000, 63-2).mirror(), new Pose(8.000, 60-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 60-2).mirror(), new Pose(20, 63-2).mirror())
+                            new BezierLine(new Pose(8, 60-2).mirror(), new Pose(20, 63-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -231,7 +228,7 @@ public class RedAuto extends LinearOpMode {
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 40.500-2).mirror(), new Pose(9.5, 40.500-2).mirror())
+                            new BezierLine(new Pose(41.000, 38.500-2).mirror(), new Pose(8, 38.500-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(180+180))
                     .build();
@@ -239,10 +236,9 @@ public class RedAuto extends LinearOpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(9.5, 40.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(8, 38.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(319-90))
-
                     .build();
 
             Path14 = follower
@@ -260,15 +256,7 @@ public class RedAuto extends LinearOpMode {
 
         if (!follower.isBusy()) {
             switch (pathState) {
-
                 case 0:
-                    paths.initPaths(follower);
-
-                    follower.followPath(paths.Path15);
-                    pathState = 1;
-                    break;
-
-                case 1:
 
                     TiltControl.setPosition(0.4);
                     Pusher.setPosition(0.47);
@@ -278,6 +266,11 @@ public class RedAuto extends LinearOpMode {
                     //LeftOuttake.setVelocity(-860);
                     Intake.setPower(-1);
                     follower.followPath(paths.Path1);
+
+                    pathState = 1;
+                    break;
+                case 1:
+                    follower.followPath(paths.Path15);
 
                     pathState = 2;
                     break;
@@ -292,40 +285,46 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    while (!align) {
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
                         LLResult result = limelight.getLatestResult();
-                        if (result.getTx() >= 2.4) {
-                            if (result.getTx() >= 1.4) {
-                                leftFront.setPower(0.15);
-                                leftBack.setPower(0.15);
-                                rightBack.setPower(-0.15);
-                                rightFront.setPower(-0.15);
-                            } else {
-                                leftFront.setPower(0.2);
-                                leftBack.setPower(0.2);
-                                rightBack.setPower(-0.2);
-                                rightFront.setPower(-0.2);
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
                             }
-                        } else if (result.getTx() <= -4.4) {
-                            if (result.getTx() <= -3.4) {
-                                leftFront.setPower(-0.15);
-                                leftBack.setPower(-0.15);
-                                rightBack.setPower(0.15);
-                                rightFront.setPower(0.15);
-                            } else {
-                                leftFront.setPower(-0.2);
-                                leftBack.setPower(-0.2);
-                                rightBack.setPower(0.2);
-                                rightFront.setPower(0.2);
-                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
+                            // Aligned
                             leftFront.setPower(0);
                             leftBack.setPower(0);
-                            rightBack.setPower(0);
                             rightFront.setPower(0);
+                            rightBack.setPower(0);
                             align = true;
                         }
                     }
+                    follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -397,40 +396,46 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
                     aimTimer.reset();
-                    while (!align) {
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
                         LLResult result = limelight.getLatestResult();
-                        if (result.getTx() >= 2.4) {
-                            if (result.getTx() >= 1.4) {
-                                leftFront.setPower(0.15);
-                                leftBack.setPower(0.15);
-                                rightBack.setPower(-0.15);
-                                rightFront.setPower(-0.15);
-                            } else {
-                                leftFront.setPower(0.2);
-                                leftBack.setPower(0.2);
-                                rightBack.setPower(-0.2);
-                                rightFront.setPower(-0.2);
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
                             }
-                        } else if (result.getTx() <= -4.4) {
-                            if (result.getTx() <= -3.4) {
-                                leftFront.setPower(-0.15);
-                                leftBack.setPower(-0.15);
-                                rightBack.setPower(0.15);
-                                rightFront.setPower(0.15);
-                            } else {
-                                leftFront.setPower(-0.2);
-                                leftBack.setPower(-0.2);
-                                rightBack.setPower(0.2);
-                                rightFront.setPower(0.2);
-                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
+                            // Aligned
                             leftFront.setPower(0);
                             leftBack.setPower(0);
-                            rightBack.setPower(0);
                             rightFront.setPower(0);
+                            rightBack.setPower(0);
                             align = true;
                         }
                     }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -488,40 +493,46 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
                     aimTimer.reset();
-                    while (!align) {
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
                         LLResult result = limelight.getLatestResult();
-                        if (result.getTx() >= 2.4) {
-                            if (result.getTx() >= 1.4) {
-                                leftFront.setPower(0.15);
-                                leftBack.setPower(0.15);
-                                rightBack.setPower(-0.15);
-                                rightFront.setPower(-0.15);
-                            } else {
-                                leftFront.setPower(0.2);
-                                leftBack.setPower(0.2);
-                                rightBack.setPower(-0.2);
-                                rightFront.setPower(-0.2);
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
                             }
-                        } else if (result.getTx() <= -4.4) {
-                            if (result.getTx() <= -3.4) {
-                                leftFront.setPower(-0.15);
-                                leftBack.setPower(-0.15);
-                                rightBack.setPower(0.15);
-                                rightFront.setPower(0.15);
-                            } else {
-                                leftFront.setPower(-0.2);
-                                leftBack.setPower(-0.2);
-                                rightBack.setPower(0.2);
-                                rightFront.setPower(0.2);
-                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
+                            // Aligned
                             leftFront.setPower(0);
                             leftBack.setPower(0);
-                            rightBack.setPower(0);
                             rightFront.setPower(0);
+                            rightBack.setPower(0);
                             align = true;
                         }
                     }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -573,40 +584,46 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
                     aimTimer.reset();
-                    while (!align) {
+                    align = false;
+                    follower.pausePathFollowing();
+                    while(!align) {
                         LLResult result = limelight.getLatestResult();
-                        if (result.getTx() >= 2.4) {
-                            if (result.getTx() >= 1.4) {
-                                leftFront.setPower(0.15);
-                                leftBack.setPower(0.15);
-                                rightBack.setPower(-0.15);
-                                rightFront.setPower(-0.15);
-                            } else {
-                                leftFront.setPower(0.2);
-                                leftBack.setPower(0.2);
-                                rightBack.setPower(-0.2);
-                                rightFront.setPower(-0.2);
+                        double tx = result.getTx();   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
                             }
-                        } else if (result.getTx() <= -4.4) {
-                            if (result.getTx() <= -3.4) {
-                                leftFront.setPower(-0.15);
-                                leftBack.setPower(-0.15);
-                                rightBack.setPower(0.15);
-                                rightFront.setPower(0.15);
-                            } else {
-                                leftFront.setPower(-0.2);
-                                leftBack.setPower(-0.2);
-                                rightBack.setPower(0.2);
-                                rightFront.setPower(0.2);
-                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
                         } else {
+                            // Aligned
                             leftFront.setPower(0);
                             leftBack.setPower(0);
-                            rightBack.setPower(0);
                             rightFront.setPower(0);
+                            rightBack.setPower(0);
                             align = true;
                         }
                     }
+                    follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
