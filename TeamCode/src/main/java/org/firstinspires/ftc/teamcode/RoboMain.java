@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -13,19 +12,22 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 @TeleOp(name = "TheChosenTeleop")
 public class RoboMain extends LinearOpMode {
     double speed = 0;
-
+    double rightvelocity;
+    double leftvelocity;
+    String shootingtype = "NONE";
+    double x;
+    double y;
+    double rx;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotor Intake;
@@ -34,6 +36,10 @@ public class RoboMain extends LinearOpMode {
     private DcMotorEx RightOuttake, LeftOuttake;
     private Limelight3A limelight;
     private ElapsedTime myTimer = new ElapsedTime();
+
+    boolean btake = false;
+    boolean ltake = false;
+    boolean rtake = false;
 
     private ElapsedTime myTimera = new ElapsedTime();
 
@@ -55,6 +61,7 @@ public class RoboMain extends LinearOpMode {
     private static final double PUSHER_CLOSE = 0.45;
     private static final double INTAKE_POWER = -1.0;
     private static final double RAMP_POWER = -1;
+    boolean outtakeready = false;
     private static final double PRECISION_DRIVE_SCALE = 0.45; // when left trigger pressed
     private static final double DEFAULT_DRIVE_SCALE = 1.0;// --- Debounce / toggle helpers ---
     private boolean prevRightBumper = false;
@@ -148,14 +155,61 @@ public class RoboMain extends LinearOpMode {
         while (opModeIsActive()) {
             LLResult result = limelight.getLatestResult();
             distance = distancem(result.getTa());
-            speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+            double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
             //speed = (4.4 * distance) + 740;
-            speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+            double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+            BlueCloseAuto farauto = new BlueCloseAuto();
             Pose3D botpose = result.getBotpose();
             final double[] OUTTAKE_POWERS = {(-0.57), (-0.45), (-0.35)};
-            double y = gamepad1.left_stick_y; // forward
-            double x = -gamepad1.left_stick_x;  // strafe
-            double rx = gamepad1.right_stick_x; // rotation
+            // ALIGNING {
+            if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500) {
+
+                macro = true;
+
+                // Start timer ONCE
+                if (!timerStarted) {
+                    myTimer.reset();
+                    timerStarted = true;
+                }
+                if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                    manual = gamepad2.a;
+                } else {
+                    double tx = result.getTx();   // Limelight angle error
+
+                    // ---- TUNING VALUES ----
+                    double kP = 0.02;             // proportional gain
+                    double minPower = 0.08;       // minimum turn power
+                    double maxPower = 0.30;       // max turn power
+                    double deadband = 0.5;        // degrees allowed error
+
+                    if (Math.abs(tx) > deadband) {
+                        rx = tx * kP;
+                    } else {
+                        rx = 0;
+                    }
+                }
+
+                // }
+                // =========================
+                // DELAY BEFORE INTAKE
+                // =========================
+                if (myTimer.milliseconds() >= 500) {
+                    macroa = true;
+                }
+
+            } else {
+                // =========================
+                // RESET WHEN TRIGGER RELEASED
+                // =========================
+                macro = false;
+                macroa = false;
+                timerStarted = false;
+                rx = gamepad1.right_stick_x;;
+
+            }
+            //DRIVING {
+             y = gamepad1.left_stick_y; // forward
+             x = -gamepad1.left_stick_x;  // strafe
 
             double driveScale = (gamepad1.left_trigger > 0.1) ? PRECISION_DRIVE_SCALE : DEFAULT_DRIVE_SCALE;
 
@@ -170,7 +224,7 @@ public class RoboMain extends LinearOpMode {
             rightFront.setPower(rf);
             rightBack.setPower(rb);
 
-
+            // }
             if (gamepad2.a || macroa || macrob ) {
                 if (gamepad2.right_bumper || gamepad1.right_bumper) {
                     if (manual) {
@@ -204,109 +258,45 @@ public class RoboMain extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.right_trigger > 0 && distance < 500) {
 
-                macro = true;
-
-                // Start timer ONCE
-                if (!timerStarted) {
-                    myTimer.reset();
-                    timerStarted = true;
-                }
-
-                // =========================
-                // MANUAL OVERRIDE
-                // =========================
-                if (gamepad2.right_bumper || gamepad1.right_bumper) {
-                    manual = gamepad2.a;
-                } else {
-
-                    // =========================
-                    // AUTO ALIGN (P CONTROL)
-                    // =========================
-                    double tx = result.getTx();   // Limelight angle error
-
-                    // ---- TUNING VALUES ----
-                    double kP = 0.02;             // proportional gain
-                    double minPower = 0.08;       // minimum turn power
-                    double maxPower = 0.30;       // max turn power
-                    double deadband = 0.5;        // degrees allowed error
-
-                    if (Math.abs(tx) > deadband) {
-
-                        double turnPower = tx * kP;
-
-                        // Clamp to max power
-                        turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
-
-                        // Enforce minimum power
-                        if (Math.abs(turnPower) < minPower) {
-                            turnPower = Math.signum(turnPower) * minPower;
-                        }
-
-                        // Apply turn
-                        leftFront.setPower(turnPower);
-                        leftBack.setPower(turnPower);
-                        rightFront.setPower(-turnPower);
-                        rightBack.setPower(-turnPower);
-
-                    } else {
-                        // Aligned
-                        leftFront.setPower(0);
-                        leftBack.setPower(0);
-                        rightFront.setPower(0);
-                        rightBack.setPower(0);
-                    }
-                }
-
-                // =========================
-                // DELAY BEFORE INTAKE
-                // =========================
-                if (myTimer.milliseconds() >= 500) {
-                    macroa = true;
-                }
-
-            } else {
-                // =========================
-                // RESET WHEN TRIGGER RELEASED
-                // =========================
-                macro = false;
-                macroa = false;
-                timerStarted = false;
-
-            }
-
-            if (gamepad2.left_trigger > 0 && distance < 500) {
+            if (gamepad2.left_trigger > 0  && distance < 500) {
 
                 macrob = true;
                 // Start timer ONCE
-                if (!timerStarteda) {
-                    myTimera.reset();
-                    timerStarteda = true;
-                }
+
 
                 // Drive alignment
-                if (result.getTx() >= 5.05) {
-                    leftFront.setPower(0.2);
-                    leftBack.setPower(0.2);
-                    rightBack.setPower(-0.2);
-                    rightFront.setPower(-0.2);
-                } else if (result.getTx() <= 0.05) {
-                    leftFront.setPower(-0.2);
-                    leftBack.setPower(-0.2);
-                    rightBack.setPower(0.2);
-                    rightFront.setPower(0.2);
+                if (result.getTx() >= 2.8) {
+                    leftFront.setPower(0.14);
+                    leftBack.setPower(0.14);
+                    rightBack.setPower(-0.14);
+                    rightFront.setPower(-0.14);
+                } else if (result.getTx() <= 1.6) {
+                    leftFront.setPower(-0.14);
+                    leftBack.setPower(-0.14);
+                    rightBack.setPower(0.14);
+                    rightFront.setPower(0.14);
                 } else {
                     leftFront.setPower(0);
                     leftBack.setPower(0);
                     rightBack.setPower(0);
                     rightFront.setPower(0);
+                    if (!timerStarteda) {
+                        myTimera.reset();
+                        timerStarteda = true;
+                    }
+                    if (myTimer.milliseconds() >= 2000) {
+                        if (outtakeready) {
+                            macroab = true;
+                        } else {
+                            macroab = false;
+                        }
+                    }
+
                 }
 
-                // AFTER 500 ms → allow intake
-                if (myTimera.milliseconds() >= 1000) {
-                    macroab = true;
-                }
+
+
 
             } else {
                 // Reset everything when X is released
@@ -316,7 +306,7 @@ public class RoboMain extends LinearOpMode {
             }
 
 
-            if (gamepad2.b || macro || macrob) {
+            if ( macro || macrob) {
                 Pusher.setPosition(PUSHER_HALF);
             } else {
                 Pusher.setPosition(PUSHER_OPEN);
@@ -330,14 +320,33 @@ public class RoboMain extends LinearOpMode {
             }
 
             prevRightBumper = rbb;  // update state
-            if (gamepad2.dpad_down || gamepad2.right_trigger > 0 || gamepad2.left_trigger > 0) {
-                outtake();
-            } else if (gamepad2.dpad_up) {
+            if (gamepad2.right_trigger > 0)  {
+                rtake = true;
+                RightOuttake.setVelocity(outtake(speedx,speed,"CLOSE",RightOuttake.getVelocity()));
+                LeftOuttake.setVelocity(outtakeleft(speedx,speed,"CLOSE",LeftOuttake.getVelocity()));
+                TiltControl.setPosition(.35);
+
+            } else if (gamepad2.left_trigger > 0 ) {
+                ltake = true;
+                RightOuttake.setVelocity(outtake(speedx,speed,"BLUEFAR",RightOuttake.getVelocity()));
+                LeftOuttake.setVelocity(outtakeleft(speedx,speed,"BLUEFAR",LeftOuttake.getVelocity()));
+
+                TiltControl.setPosition(.4);
+
+            }
+            else if (gamepad2.dpad_up) {
                 RightOuttake.setVelocity(6000);
                 LeftOuttake.setVelocity(6000);
+            }  else if (gamepad2.b) {
+                RightOuttake.setVelocity(outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()));
+                LeftOuttake.setVelocity(outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()));
+
+                TiltControl.setPosition(.4);
+
             } else {
                 RightOuttake.setVelocity(0);
                 LeftOuttake.setVelocity(0);
+                shootingtype = "NONE";
             }
             if (tiltIndex == 0) {
                 shooter = "Far";
@@ -385,87 +394,81 @@ public class RoboMain extends LinearOpMode {
     }
     final double[] OUTTAKE_POWERS = {(-0.57), (-0.45), (-0.35)};
 
-    private void outtake() {
-        //if (RightOuttake.getVelocity() > speed+25) {
-        //    RightOuttake.setPower(0.2);
-        //} else if (RightOuttake.getVelocity() < speed-25) {
-        //    RightOuttake.setPower(.75);
-        //} else {
-        if (gamepad2.right_trigger > 0) {
-            TiltControl.setPosition(.35);
-            if (RightOuttake.getVelocity() > speed + 25) {
-                RightOuttake.setVelocity(0);
-            } else if (RightOuttake.getVelocity() < speed - 25) {
-                RightOuttake.setVelocity(speed + (speed * speedx));
+    public double outtake(double sspeedx, double sspeed, String shoottype, double RightCurrVeloc) {
+        BlueCloseAuto farauto = new BlueCloseAuto();
+         if (Objects.equals(shoottype, "BLUEFAR")) {
+            if (RightCurrVeloc > sspeed + 100) {
+                return (100);
+
+            } else if (RightCurrVeloc < sspeed - 100) {
+                return (sspeed + 275);
+
             } else {
-                RightOuttake.setVelocity(speed);
+                return (sspeed - 375);
             }
 
-            if (LeftOuttake.getVelocity() > speed + 25) {
-                LeftOuttake.setVelocity(0);
-            } else if (LeftOuttake.getVelocity() < speed - 25) {
-                LeftOuttake.setVelocity(speed + (speed * speedx));
-            } else {
-                LeftOuttake.setVelocity(speed);
-            }
-        } else if (gamepad2.left_trigger > 0) {
-            TiltControl.setPosition(.4);
-            if (RightOuttake.getVelocity() > speed + 10) {
-                RightOuttake.setVelocity(-50);
-            } else if (RightOuttake.getVelocity() < speed - 10) {
-                RightOuttake.setVelocity(speed + 320);
-            } else {
-                RightOuttake.setVelocity(speed-320);
-            }
 
-            if (LeftOuttake.getVelocity() > speed + 10) {
-                LeftOuttake.setVelocity(-50);
-            } else if (LeftOuttake.getVelocity() < speed - 10) {
-                LeftOuttake.setVelocity(speed + 350);
+        }
+        else if (Objects.equals(shoottype, "CLOSE")) {
+            if (RightCurrVeloc > sspeed + 25) {
+                return (0);
+            } else if (RightCurrVeloc < sspeed - 25) {
+                return (sspeed + (sspeed * sspeedx));
             } else {
-                LeftOuttake.setVelocity(speed-350);
+                return (sspeed);
             }
         }
-        /*if (RightOuttake.getVelocity() > speed) {
-            RightOuttake.setVelocity(distance * 8.3);
-        } else if (RightOuttake.getVelocity() < speed) {
-            RightOuttake.setVelocity(distance * 21.6);
-        } else {
-            RightOuttake.setVelocity(speed);
+            else if (Objects.equals(shoottype, "REDFAR")){
+                if (RightCurrVeloc > sspeed + 100) {
+                    return (100);
+
+                } else if (RightCurrVeloc < sspeed - 100) {
+                    return (sspeed + 275);
+
+                } else {
+                    return (sspeed - 375);
+                }
+
+            }
+        return (0);
+    }
+    public double outtakeleft(double sspeedx, double sspeed, String shoottype, double LeftCurrVeloc) {
+        BlueCloseAuto farauto = new BlueCloseAuto();
+        if (Objects.equals(shoottype, "BLUEFAR")) {
+            if (LeftCurrVeloc > sspeed + 100) {
+                return (100);
+
+            } else if (LeftCurrVeloc < sspeed - 100) {
+                return (sspeed + 275);
+
+            } else {
+                return (sspeed - 375);
+            }
         }
-        if (LeftOuttake.getVelocity() > speed) {
-            LeftOuttake.setVelocity(distance * 8.3);
-        } else if (LeftOuttake.getVelocity() < speed) {
-            LeftOuttake.setVelocity(distance * 21.6);
-        } else {
-            LeftOuttake.setVelocity(speed);
-        }*/
+        else if (Objects.equals(shoottype, "CLOSE")) {
+            if (LeftCurrVeloc > sspeed + 25) {
+                return (0);
+            } else if (LeftCurrVeloc < sspeed - 25) {
+                return (sspeed + (sspeed * sspeedx));
+            } else {
 
+                return (sspeed);
 
-        //}
-        //if (LeftOuttake.getVelocity() > speed+25) {
-        //    LeftOuttake.setPower(0.2);
-        //} else if (LeftOuttake.getVelocity() < speed-25) {
-        //    LeftOuttake.setPower(.75);
-        //} else {
-            //LeftOuttake.setVelocity(speed);
-        //}
-
-/*                if (RightOuttake.getVelocity() > speed+25) {
-            RightOuttake.setPower(0);
-
-        } else if (RightOuttake.getVelocity() < speed-25){
-            RightOuttake.setPower(-.75);
-        } else {
-            RightOuttake.setPower(-speed/2800);
+            }
         }
-        if (LeftOuttake.getVelocity() > speed+25) {
-            LeftOuttake.setPower(0);
-        } else if (LeftOuttake.getVelocity() < speed-25){
-            LeftOuttake.setPower(-.75);
-        } else {
-            LeftOuttake.setPower(speed/2800);
-        }*/
+        else if (Objects.equals(shoottype, "REDFAR")){
+            if (LeftCurrVeloc > sspeed + 100) {
+                return (100);
+
+            } else if (LeftCurrVeloc < sspeed - 100) {
+                return (sspeed + 275);
+
+            } else {
+                return (sspeed - 375);
+
+            }
+        }
+        return (0);
     }
     public double distancem(double x) {
         double AprilTagDistance = Math.pow((x/2604.88382),-0.5367);

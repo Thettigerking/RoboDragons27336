@@ -253,7 +253,7 @@ public void runOpMode() throws InterruptedException {
                 case 0:
 
                     TiltControl.setPosition(0.4);
-                    Pusher.setPosition(0.47);
+                        Pusher.setPosition(0.47);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
