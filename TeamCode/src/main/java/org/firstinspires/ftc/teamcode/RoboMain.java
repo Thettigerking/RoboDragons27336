@@ -208,8 +208,8 @@ public class RoboMain extends LinearOpMode {
 
             }
             //DRIVING {
-             y = gamepad1.left_stick_y; // forward
-             x = -gamepad1.left_stick_x;  // strafe
+            y = gamepad1.left_stick_y; // forward
+            x = -gamepad1.left_stick_x;  // strafe
 
             double driveScale = (gamepad1.left_trigger > 0.1) ? PRECISION_DRIVE_SCALE : DEFAULT_DRIVE_SCALE;
 
@@ -396,7 +396,7 @@ public class RoboMain extends LinearOpMode {
 
     public double outtake(double sspeedx, double sspeed, String shoottype, double RightCurrVeloc) {
         BlueCloseAuto farauto = new BlueCloseAuto();
-         if (Objects.equals(shoottype, "BLUEFAR")) {
+        if (Objects.equals(shoottype, "BLUEFAR")) {
             if (RightCurrVeloc > sspeed + 100) {
                 return (100);
 
@@ -418,18 +418,18 @@ public class RoboMain extends LinearOpMode {
                 return (sspeed);
             }
         }
-            else if (Objects.equals(shoottype, "REDFAR")){
-                if (RightCurrVeloc > sspeed + 100) {
-                    return (100);
+        else if (Objects.equals(shoottype, "REDFAR")){
+            if (RightCurrVeloc > sspeed + 100) {
+                return (100);
 
-                } else if (RightCurrVeloc < sspeed - 100) {
-                    return (sspeed + 275);
+            } else if (RightCurrVeloc < sspeed - 100) {
+                return (sspeed + 275);
 
-                } else {
-                    return (sspeed - 375);
-                }
-
+            } else {
+                return (sspeed - 375);
             }
+
+        }
         return (0);
     }
     public double outtakeleft(double sspeedx, double sspeed, String shoottype, double LeftCurrVeloc) {
@@ -475,4 +475,3 @@ public class RoboMain extends LinearOpMode {
         return AprilTagDistance;
     }
 }
-

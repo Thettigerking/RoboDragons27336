@@ -42,66 +42,66 @@ public class BlueAuto extends LinearOpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
-//131
-@Override
-public void runOpMode() throws InterruptedException {
+    //131
+    @Override
+    public void runOpMode() throws InterruptedException {
 
-    panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-    follower = Constants.createFollower(hardwareMap);
-    follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)));
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(8.5, 8.5, Math.toRadians(90)));
 
-    paths = new Paths(follower); // Build paths
-    Intake = hardwareMap.get(DcMotor.class, "Intake");
-    BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
-    BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
-    helper3 = hardwareMap.get(CRServo.class, "helper3");
+        paths = new Paths(follower); // Build paths
+        Intake = hardwareMap.get(DcMotor.class, "Intake");
+        BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
+        BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
+        helper3 = hardwareMap.get(CRServo.class, "helper3");
 
-    leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-    leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
-    rightFront= hardwareMap.get(DcMotor.class, "rightFront");
-    rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        leftBack  = hardwareMap.get(DcMotor.class, "leftBack");
+        rightFront= hardwareMap.get(DcMotor.class, "rightFront");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
-    Pusher  = hardwareMap.get(Servo.class, "Pusher");
-    TiltControl = hardwareMap.get(Servo.class, "TiltControl");
+        Pusher  = hardwareMap.get(Servo.class, "Pusher");
+        TiltControl = hardwareMap.get(Servo.class, "TiltControl");
 
-    RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
-    LeftOuttake  = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
+        RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
+        LeftOuttake  = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
 
-    LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-    limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-    limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(0);
 
-    limelight.start();
-    RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-    panelsTelemetry.debug("Status", "Initialized");
-    panelsTelemetry.update(telemetry);
-
-    waitForStart();
-    while(opModeInInit()){
-        follower.updatePose();
-    }
-    while(opModeIsActive()) {
-
-
-        follower.update(); // Update Pedro Pathing
-        try {
-            pathState = autonomousPathUpdate(); // Update autonomous state machine
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Log values to Panels and Driver Station
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+        limelight.start();
+        RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+        panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 
+        waitForStart();
+        while(opModeInInit()){
+            follower.updatePose();
+        }
+        while(opModeIsActive()) {
+
+
+            follower.update(); // Update Pedro Pathing
+            try {
+                pathState = autonomousPathUpdate(); // Update autonomous state machine
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Log values to Panels and Driver Station
+            panelsTelemetry.debug("Path State", pathState);
+            panelsTelemetry.debug("X", follower.getPose().getX());
+            panelsTelemetry.debug("Y", follower.getPose().getY());
+            panelsTelemetry.debug("Heading", follower.getPose().getHeading());
+            panelsTelemetry.update(telemetry);
+
+        }
     }
-}
 
     public static class Paths {
 
@@ -137,30 +137,30 @@ public void runOpMode() throws InterruptedException {
             Path15 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 106), new Pose(48.000, 96))
+                            new BezierLine(new Pose(48.000, 106), new Pose(54, 98))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(312))
+                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(315))
                     .build();
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 83.000))
+                            new BezierLine(new Pose(54, 98), new Pose(48.000, 83.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 83.000), new Pose(13, 83.000))
+                            new BezierLine(new Pose(48.000, 83.000), new Pose(14, 83.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
-//
+
             Path4 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(13, 83.000), new Pose(35.000, 79.000))
+                            new BezierLine(new Pose(14, 83.000), new Pose(35.000, 79.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                     .build();
@@ -168,7 +168,7 @@ public void runOpMode() throws InterruptedException {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 79.000), new Pose(15.50, 74.000))
+                            new BezierLine(new Pose(35.000, 79.000), new Pose(15.00, 74.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -176,30 +176,29 @@ public void runOpMode() throws InterruptedException {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.50, 74.000), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(15.00, 74.000), new Pose(50.000, 94.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(306))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(324.25))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000), new Pose(48.000, 60))
+                            new BezierLine(new Pose(50.000, 94.000), new Pose(48.000, 60))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(306), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(324.75), Math.toRadians(180))
                     .build();
-
             Path8 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 60), new Pose(8.5000, 58))
+                            new BezierLine(new Pose(48.000, 60), new Pose(6.5, 58))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
             Path9 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(8.5, 58), new Pose(20, 60))
+                            new BezierLine(new Pose(6.5, 58), new Pose(20, 60))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -209,7 +208,7 @@ public void runOpMode() throws InterruptedException {
                     .addPath(
                             new BezierLine(new Pose(20, 60), new Pose(48.000, 96.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(326))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(329))
                     .build();
 
             Path10 = follower
@@ -217,13 +216,13 @@ public void runOpMode() throws InterruptedException {
                     .addPath(
                             new BezierLine(new Pose(48.000, 96.000), new Pose(41.000, 37.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(326), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(329), Math.toRadians(180))
                     .build();
 
             Path11 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 37.500), new Pose(8.5, 37.500))
+                            new BezierLine(new Pose(41.000, 37.500), new Pose(6.5, 37.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -231,16 +230,16 @@ public void runOpMode() throws InterruptedException {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(8.5, 37.500), new Pose(48.000, 96.000))
+                            new BezierLine(new Pose(6.5, 37.500), new Pose(48.000, 96.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(322))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(325))
                     .build();
             Path14 = follower
                     .pathBuilder()
                     .addPath(
                             new BezierLine(new Pose(48, 96), new Pose(24, 88.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(322), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(90))
                     .build();
 
         }
@@ -253,7 +252,7 @@ public void runOpMode() throws InterruptedException {
                 case 0:
 
                     TiltControl.setPosition(0.4);
-                        Pusher.setPosition(0.47);
+                    Pusher.setPosition(0.47);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
@@ -269,16 +268,21 @@ public void runOpMode() throws InterruptedException {
                     pathState = 2;
                     break;
                 case 2:
-
+                    align = false;
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    aimTimer.reset();
+                    TiltControl.setPosition(0.4);
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -317,22 +321,19 @@ public void runOpMode() throws InterruptedException {
                     }
                     follower.resumePathFollowing();
                     aimTimer.reset();
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1350);
+                            RightOuttake.setVelocity(-1300);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(0);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1350);
+                            LeftOuttake.setVelocity(-1300);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(0);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
@@ -351,6 +352,7 @@ public void runOpMode() throws InterruptedException {
 
                 case 3:
                     follower.followPath(paths.Path3);
+                    sleep(200);
                     pathState = 4;
                     break;
 
@@ -371,14 +373,14 @@ public void runOpMode() throws InterruptedException {
                     //LeftOuttake.setVelocity(-880);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
-                    sleep(1000);
+                    sleep(500);
                     follower.followPath(paths.Path6);
 
                     pathState = 7;
                     break;
 
                 case 7:
-
+                    TiltControl.setPosition(0.4);
                     follower.followPath(paths.Path7);
                     Pusher.setPosition(0.1);
                     try {
@@ -392,7 +394,7 @@ public void runOpMode() throws InterruptedException {
                     helper3.setPower(1);
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -433,20 +435,22 @@ public void runOpMode() throws InterruptedException {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1150);
+                            RightOuttake.setVelocity(-1325);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-370);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(outtakespeed-200);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1150);
+                            LeftOuttake.setVelocity(-1325);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-350);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            LeftOuttake.setVelocity(outtakespeed-250);
                         }
-
+                        panelsTelemetry.debug("RightOuttake",RightOuttake.getVelocity());
+                        panelsTelemetry.debug("LeftOuttake",LeftOuttake.getVelocity());
+                        panelsTelemetry.update(telemetry);
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -454,13 +458,13 @@ public void runOpMode() throws InterruptedException {
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
                     Pusher.setPosition(0.47);
+                    TiltControl.setPosition(0.36);
                     pathState = 8;
                     break;
 
                 case 8:
-
                     follower.followPath(paths.Path8);
-
+                    sleep(200);
                     pathState = 9;
                     break;
                 case 9:
@@ -489,7 +493,7 @@ public void runOpMode() throws InterruptedException {
                     helper3.setPower(1);
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -530,20 +534,22 @@ public void runOpMode() throws InterruptedException {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1120);
+                            RightOuttake.setVelocity(-1100);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-275);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1120);
+                            LeftOuttake.setVelocity(-1100);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-275);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            LeftOuttake.setVelocity(outtakespeed-50);
                         }
-
+                        panelsTelemetry.debug("RightOuttake",RightOuttake.getVelocity());
+                        panelsTelemetry.debug("LeftOuttake",LeftOuttake.getVelocity());
+                        panelsTelemetry.update(telemetry);
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -555,7 +561,7 @@ public void runOpMode() throws InterruptedException {
                     break;
                 case 12:
                     follower.followPath(paths.Path11);
-
+                    sleep(200);
                     pathState = 13;
                     break;
                 case 13:
@@ -580,7 +586,7 @@ public void runOpMode() throws InterruptedException {
                     helper3.setPower(1);
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -621,16 +627,16 @@ public void runOpMode() throws InterruptedException {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1190);
+                            RightOuttake.setVelocity(-1130);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-500);
+                            RightOuttake.setVelocity(-550);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1190);
+                            LeftOuttake.setVelocity(-1130);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-500);
+                            LeftOuttake.setVelocity(-550);
                         } else {
                             LeftOuttake.setVelocity(outtakespeed);
                         }
