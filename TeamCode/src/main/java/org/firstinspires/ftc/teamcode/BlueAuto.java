@@ -435,22 +435,20 @@ public class BlueAuto extends LinearOpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1325);
+                            RightOuttake.setVelocity(-1120);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-370);
+                            RightOuttake.setVelocity(-520);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed-200);
+                            RightOuttake.setVelocity(outtakespeed+100);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1325);
+                            LeftOuttake.setVelocity(-1120);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-350);
+                            LeftOuttake.setVelocity(-550);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed-250);
+                            LeftOuttake.setVelocity(outtakespeed+100);
                         }
-                        panelsTelemetry.debug("RightOuttake",RightOuttake.getVelocity());
-                        panelsTelemetry.debug("LeftOuttake",LeftOuttake.getVelocity());
-                        panelsTelemetry.update(telemetry);
+
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
