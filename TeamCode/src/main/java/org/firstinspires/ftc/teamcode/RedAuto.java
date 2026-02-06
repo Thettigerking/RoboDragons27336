@@ -280,19 +280,18 @@ public class RedAuto extends LinearOpMode {
                     pathState = 2;
                     break;
                 case 2:
-                    align = false;
+                    Intake.setPower(0);
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
+                    aimTimer.reset();
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    aimTimer.reset();
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -329,6 +328,10 @@ public class RedAuto extends LinearOpMode {
                             align = true;
                         }
                     }
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
@@ -391,19 +394,18 @@ public class RedAuto extends LinearOpMode {
                 case 7:
                     align = false;
                     follower.followPath(paths.Path7);
+                    Intake.setPower(0);
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
                     aimTimer.reset();
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    aimTimer.reset();
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -440,20 +442,25 @@ public class RedAuto extends LinearOpMode {
                             align = true;
                         }
                     }
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
+                    aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
                             RightOuttake.setVelocity(-1120 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-520 * targetVelocity);
+                            RightOuttake.setVelocity(-450 * targetVelocity);
                         } else {
                             RightOuttake.setVelocity((outtakespeed+100) * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
                             LeftOuttake.setVelocity(-1120 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550 * targetVelocity);
+                            LeftOuttake.setVelocity(-450 * targetVelocity);
                         } else {
                             LeftOuttake.setVelocity((outtakespeed+100) * targetVelocity);
                         }
@@ -488,19 +495,18 @@ public class RedAuto extends LinearOpMode {
                     break;
                 case 11:
                     follower.followPath(paths.Path10);
+                    Intake.setPower(0);
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
+                    aimTimer.reset();
                     align = false;
                     follower.pausePathFollowing();
                     aimTimer.reset();
-                    while(!align) {
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -537,6 +543,10 @@ public class RedAuto extends LinearOpMode {
                             align = true;
                         }
                     }
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
@@ -544,14 +554,14 @@ public class RedAuto extends LinearOpMode {
                         if (RightOuttake.getVelocity() > outtakespeed) {
                             RightOuttake.setVelocity(-1090 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-550 * targetVelocity);
+                            RightOuttake.setVelocity(-450 * targetVelocity);
                         } else {
                             RightOuttake.setVelocity((outtakespeed-50) * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
                             LeftOuttake.setVelocity(-1090 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550 * targetVelocity);
+                            LeftOuttake.setVelocity(-450 * targetVelocity);
                         } else {
                             LeftOuttake.setVelocity((outtakespeed-50) * targetVelocity);
                         }
@@ -579,20 +589,18 @@ public class RedAuto extends LinearOpMode {
                     pathState = 14;
                     break;
                 case 14:
-
+                    Intake.setPower(-1);
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
                     } catch(InterruptedException e) {
                         telemetry.addData("Warning","Sleeping interrupted:");
                     }
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
                     aimTimer.reset();
                     align = false;
                     follower.pausePathFollowing();
-                    while(!align) {
+                    aimTimer.reset();
+                    while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
 
@@ -629,7 +637,12 @@ public class RedAuto extends LinearOpMode {
                             align = true;
                         }
                     }
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
+                    aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
