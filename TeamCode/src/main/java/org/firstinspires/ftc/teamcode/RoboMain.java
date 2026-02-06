@@ -148,11 +148,6 @@ public class RoboMain extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            double voltage = 0;
-            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-                voltage = sensor.getVoltage();
-            }
-            double targetVelocity = 12.5/voltage;
 
             LLResult result = limelight.getLatestResult();
             distance = distancem(result.getTa());
@@ -238,7 +233,7 @@ public class RoboMain extends LinearOpMode {
                     double kP = 0.02;             // proportional gain
                     double minPower = 0.08;       // minimum turn power
                     double maxPower = 0.30;       // max turn power
-                    double deadband = 0.5;        // degrees allowed error
+                    double deadband = 0.1;        // degrees allowed error
 
                     if (Math.abs(tx) > deadband) {
 
@@ -399,27 +394,35 @@ public class RoboMain extends LinearOpMode {
         //} else if (RightOuttake.getVelocity() < speed-25) {
         //    RightOuttake.setPower(.75);
         //} else {
-            if (distance < 90) {
+        double voltage = 0;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            voltage = sensor.getVoltage();
+        }
+        double targetVelocity = 12/voltage;
+
+        if (distance < 90) {
                 TiltControl.setPosition(.35);
                 if (RightOuttake.getVelocity() > speed + 25) {
                     RightOuttake.setVelocity(0);
                 } else if (RightOuttake.getVelocity() < speed - 25) {
-                    RightOuttake.setVelocity(speed + (speed * speedx));
+                    RightOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
                 } else {
-                    RightOuttake.setVelocity(speed);
+                    RightOuttake.setVelocity(speed * targetVelocity);
                 }
 
                 if (LeftOuttake.getVelocity() > speed + 25) {
                     LeftOuttake.setVelocity(0);
                 } else if (LeftOuttake.getVelocity() < speed - 25) {
-                    LeftOuttake.setVelocity(speed + (speed * speedx));
+                    LeftOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
                 } else {
-                    LeftOuttake.setVelocity(speed);
+                    LeftOuttake.setVelocity(speed * targetVelocity);
                 }
             } else {
+
                 Shooting shooting = new Shooting();
-                RightOuttake.setVelocity(shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()));
-                LeftOuttake.setVelocity(shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()));
+                TiltControl.setPosition(0.4);
+                RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-50) * targetVelocity);
+                LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-50) * targetVelocity);
             }
 
         /*if (RightOuttake.getVelocity() > speed) {

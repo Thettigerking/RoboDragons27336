@@ -213,17 +213,17 @@ public class RedAuto extends LinearOpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 63-2).mirror(), new Pose(48.000, 96.000-2).mirror())
+                            new BezierLine(new Pose(20, 63-2).mirror(), new Pose(52, 92-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(310-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(306-90))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 96.000-2).mirror(), new Pose(41.000, 40.500-2).mirror())
+                            new BezierLine(new Pose(52, 94-2).mirror(), new Pose(41.000, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(310-90), Math.toRadians(180+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(306-90), Math.toRadians(180+180))
                     .build();
 
             Path11 = follower
@@ -239,15 +239,15 @@ public class RedAuto extends LinearOpMode {
                     .addPath(
                             new BezierLine(new Pose(8, 38.500-2).mirror(), new Pose(48.000, 96.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(315-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(312-90))
                     .build();
 
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48, 96-2).mirror(), new Pose(24, 88.000-2).mirror())
+                            new BezierLine(new Pose(52, 92-2).mirror(), new Pose(24, 88.000-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(315-90), Math.toRadians(90+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(312-90), Math.toRadians(90+180))
                     .build();
 
         }
@@ -258,7 +258,7 @@ public class RedAuto extends LinearOpMode {
         for (VoltageSensor sensor : hardwareMap.voltageSensor) {
             voltage = sensor.getVoltage();
         }
-        double targetVelocity = 12.5/voltage;
+        double targetVelocity = 12/voltage;
         if (!follower.isBusy()) {
             switch (pathState) {
                 case 0:
@@ -497,9 +497,9 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    aimTimer.reset();
                     align = false;
                     follower.pausePathFollowing();
+                    aimTimer.reset();
                     while(!align) {
                         LLResult result = limelight.getLatestResult();
                         double tx = result.getTx();   // Limelight angle error
@@ -538,6 +538,7 @@ public class RedAuto extends LinearOpMode {
                         }
                     }
                     follower.resumePathFollowing();
+                    aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
@@ -545,14 +546,14 @@ public class RedAuto extends LinearOpMode {
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity((outtakespeed-50) * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
                             LeftOuttake.setVelocity(-1090 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
+                            LeftOuttake.setVelocity((outtakespeed-50) * targetVelocity);
                         }
 
                     }
