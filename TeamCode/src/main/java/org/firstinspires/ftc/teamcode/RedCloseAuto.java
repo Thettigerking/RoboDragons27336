@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Red Far Autonomous", group = "Autonomous")
@@ -102,7 +103,6 @@ public class RedCloseAuto extends LinearOpMode {
             panelsTelemetry.debug("Y", follower.getPose().getY());
             panelsTelemetry.debug("Heading", follower.getPose().getHeading());
             panelsTelemetry.update(telemetry);
-
         }
         while (opModeIsActive()) {
             LLResult result = limelight.getLatestResult();
@@ -111,7 +111,7 @@ public class RedCloseAuto extends LinearOpMode {
             double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
             LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
             RightOuttake.setDirection(DcMotor.Direction.REVERSE);
-            TiltControl.setPosition(0.4);
+            TiltControl.setPosition(0.35);
             follower.update();
             autonomousPathUpdate();
             Shooting mainteleop = new Shooting();
@@ -148,14 +148,22 @@ public class RedCloseAuto extends LinearOpMode {
                     leftBack.setPower(0);
                     rightFront.setPower(0);
                     rightBack.setPower(0);
+                    Pusher.setPosition(0.1);
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
                     Intake.setPower(-1);
-                    Pusher.setPosition(0.1);                }
+                }
             }
-            RightOuttake.setVelocity(mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-100);
-            LeftOuttake.setVelocity((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-100);            // Log values to Panels and Driver Station
+            double voltage = 0;
+            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+                voltage = sensor.getVoltage();
+            }
+            double targetVelocity = 12.5/voltage;
+
+            RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-50) * targetVelocity);
+            LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-50)  * targetVelocity);
+            // Log values to Panels and Driver Station
             panelsTelemetry.debug("Path State", pathState);
             panelsTelemetry.debug("X", follower.getPose().getX());
             panelsTelemetry.debug("Y", follower.getPose().getY());
@@ -182,17 +190,17 @@ public class RedCloseAuto extends LinearOpMode {
 
                                     new Pose(56.000, 15.000).mirror()
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(250-90), Math.toRadians(280-90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(300+90))
 
                     .build();
             Path1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(56.000, 15.000).mirror()
+                                    new Pose(56.000, 15.000)
                                     ,
 
-                                    new Pose(56.000, 20.000).mirror()
+                                    new Pose(56.000, 20.000)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(280-90))
+                    ).setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(300))
 
                     .build();
         }
@@ -203,16 +211,10 @@ public class RedCloseAuto extends LinearOpMode {
         if (!follower.isBusy()) {
             switch (pathState) {
                 case 0:
-                    Pusher.setPosition(0.47);
-                    follower.followPath(paths.Path2);
-                    pathState = 1;
-                    break;
-                case 1:
                     follower.pausePathFollowing();
                     align = true;
-
-                    pathState = 2;
-                case 2:
+                    pathState = 1;
+                    break;
             }
         }
     }

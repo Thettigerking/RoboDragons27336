@@ -24,6 +24,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "Blue Far Autonomous", group = "Autonomous")
@@ -148,16 +149,21 @@ public class BlueCloseAuto extends LinearOpMode {
                     rightFront.setPower(0);
                     rightBack.setPower(0);
                     Pusher.setPosition(0.1);
-                    BottomRampServo.setPower(-1);
-                    BottomRampServo2.setPower(-1);
-                    helper3.setPower(1);
-                    Intake.setPower(-1);
+                    BottomRampServo.setPower(-0.5);
+                    BottomRampServo2.setPower(-0.5);
+                    helper3.setPower(0.5);
+                    Intake.setPower(-0.5);
                 }
             }
+            double voltage = 0;
+            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+                voltage = sensor.getVoltage();
+            }
+            double targetVelocity = 12.5/voltage;
 
-
-            RightOuttake.setVelocity((mainteleop.outtake(speedx,speed,"BLUEFAR",RightOuttake.getVelocity()))-150);
-            LeftOuttake.setVelocity((mainteleop.outtakeleft(speedx,speed,"BLUEFAR",LeftOuttake.getVelocity()))-150);            // Log values to Panels and Driver Station
+            RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-20) * targetVelocity);
+            LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-20)  * targetVelocity);
+            // Log values to Panels and Driver Station
             panelsTelemetry.debug("Path State", pathState);
             panelsTelemetry.debug("X", follower.getPose().getX());
             panelsTelemetry.debug("Y", follower.getPose().getY());

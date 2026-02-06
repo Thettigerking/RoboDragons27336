@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -253,7 +254,11 @@ public class RedAuto extends LinearOpMode {
     }
 
     public int autonomousPathUpdate() throws InterruptedException {
-
+        double voltage = 0;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            voltage = sensor.getVoltage();
+        }
+        double targetVelocity = 12.5/voltage;
         if (!follower.isBusy()) {
             switch (pathState) {
                 case 0:
@@ -329,18 +334,18 @@ public class RedAuto extends LinearOpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1300);
+                            RightOuttake.setVelocity(-1300 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
                             RightOuttake.setVelocity(0);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(outtakespeed * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1300);
+                            LeftOuttake.setVelocity(-1300 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
                             LeftOuttake.setVelocity(0);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
                         }
 
                     }
@@ -439,18 +444,18 @@ public class RedAuto extends LinearOpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1120);
+                            RightOuttake.setVelocity(-1120 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-520);
+                            RightOuttake.setVelocity(-520 * targetVelocity);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed+100);
+                            RightOuttake.setVelocity((outtakespeed+100) * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1120);
+                            LeftOuttake.setVelocity(-1120 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550);
+                            LeftOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed+100);
+                            LeftOuttake.setVelocity((outtakespeed+100) * targetVelocity);
                         }
 
                     }
@@ -536,18 +541,18 @@ public class RedAuto extends LinearOpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1090);
+                            RightOuttake.setVelocity(-1090 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-550);
+                            RightOuttake.setVelocity(-550 * targetVelocity);
                         } else {
                             RightOuttake.setVelocity(outtakespeed);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1090);
+                            LeftOuttake.setVelocity(-1090 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550);
+                            LeftOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
                         }
 
                     }
@@ -627,18 +632,18 @@ public class RedAuto extends LinearOpMode {
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
                         if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1130);
+                            RightOuttake.setVelocity(-1130 * targetVelocity);
                         } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-550);
+                            RightOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            RightOuttake.setVelocity(outtakespeed);
+                            RightOuttake.setVelocity(outtakespeed * targetVelocity);
                         }
                         if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1130);
+                            LeftOuttake.setVelocity(-1130 * targetVelocity);
                         } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550);
+                            LeftOuttake.setVelocity(-550 * targetVelocity);
                         } else {
-                            LeftOuttake.setVelocity(outtakespeed);
+                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
                         }
 
                     }

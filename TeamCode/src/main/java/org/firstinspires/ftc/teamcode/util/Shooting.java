@@ -18,21 +18,21 @@ public class Shooting {
             }
         } else if (Objects.equals(shoottype, "REDFAR")){
             if (RightCurrVeloc > sspeed + 100) {
-                return (100);
+                return (10);
 
             } else if (RightCurrVeloc < sspeed - 100) {
-                return (sspeed + 275);
+                return (sspeed + 265);
 
             } else {
-                return (sspeed - 375);
+                return (sspeed - 475);
             }
 
         } else if (Objects.equals(shoottype, "BLUEFAR")) {
             if (RightCurrVeloc > sspeed + 100) {
-                return (100);
+                return (10);
 
             } else if (RightCurrVeloc < sspeed - 100) {
-                return (sspeed + 275);
+                return (sspeed + 265);
 
             } else {
                 return (sspeed - 475);
