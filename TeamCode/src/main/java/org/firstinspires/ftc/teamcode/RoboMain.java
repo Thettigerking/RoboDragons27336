@@ -227,13 +227,14 @@ public class RoboMain extends LinearOpMode {
                     // =========================
                     // AUTO ALIGN (P CONTROL)
                     // =========================
-                    double tx = result.getTx();   // Limelight angle error
+                    double aimOffset = 1;   // degrees (positive = right, negative = left)
+                    double tx = result.getTx() - aimOffset;   // Limelight angle error
 
                     // ---- TUNING VALUES ----
                     double kP = 0.02;             // proportional gain
                     double minPower = 0.08;       // minimum turn power
                     double maxPower = 0.30;       // max turn power
-                    double deadband = 0.1;        // degrees allowed error
+                    double deadband = 0.05;        // degrees allowed error
 
                     if (Math.abs(tx) > deadband) {
 
@@ -398,7 +399,7 @@ public class RoboMain extends LinearOpMode {
         for (VoltageSensor sensor : hardwareMap.voltageSensor) {
             voltage = sensor.getVoltage();
         }
-        double targetVelocity = 12/voltage;
+        double targetVelocity = 11.5/voltage;
 
         if (distance < 90) {
                 TiltControl.setPosition(.35);
@@ -421,8 +422,8 @@ public class RoboMain extends LinearOpMode {
 
                 Shooting shooting = new Shooting();
                 TiltControl.setPosition(0.4);
-                RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-50) * targetVelocity);
-                LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-50) * targetVelocity);
+                RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-25) * targetVelocity);
+                LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-25) * targetVelocity);
             }
 
         /*if (RightOuttake.getVelocity() > speed) {
