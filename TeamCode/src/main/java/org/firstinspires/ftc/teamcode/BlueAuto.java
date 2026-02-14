@@ -129,8 +129,6 @@ public class BlueAuto extends LinearOpMode {
         public PathChain Path14;
 
         public PathChain Path15;
-        public PathChain Path16;
-        public PathChain Path17;
 
         public Paths(Follower follower) {
             Pose posevalue = follower.getPose();
@@ -245,24 +243,11 @@ public class BlueAuto extends LinearOpMode {
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(52, 92), new Pose(41, 12))
+                            new BezierLine(new Pose(52, 92), new Pose(24, 88.000))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(90))
                     .build();
-            Path16 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(41, 12), new Pose(6.5, 10.5))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
-                    .build();
-            Path17 = follower
-                    .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(6.5, 10.5), new Pose(52.000, 92.000))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(325))
-                    .build();
+
         }
     }
 
@@ -282,7 +267,7 @@ public class BlueAuto extends LinearOpMode {
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
                     //LeftOuttake.setVelocity(-860);
-                    Intake.setPower(-0.25);
+                    Intake.setPower(-1);
                     follower.followPath(paths.Path1);
 
                     pathState = 1;
@@ -296,6 +281,12 @@ public class BlueAuto extends LinearOpMode {
                     Intake.setPower(0);
                     align = false;
                     Pusher.setPosition(0.1);
+                    try {
+                        Thread.sleep(50);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
+
                     align = false;
                     follower.pausePathFollowing();
                     aimTimer.reset();
@@ -337,7 +328,7 @@ public class BlueAuto extends LinearOpMode {
                             align = true;
                         }
                     }
-                    Intake.setPower(-0.25);
+                    Intake.setPower(-1);
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
@@ -374,6 +365,7 @@ public class BlueAuto extends LinearOpMode {
 
                 case 3:
                     follower.followPath(paths.Path3);
+                    sleep(200);
                     pathState = 4;
                     break;
 
@@ -394,6 +386,7 @@ public class BlueAuto extends LinearOpMode {
                     //LeftOuttake.setVelocity(-880);
                     RightOuttake.setVelocity(outtakespeed);
                     LeftOuttake.setVelocity(outtakespeed);
+                    sleep(500);
                     follower.followPath(paths.Path6);
 
                     pathState = 7;
@@ -404,6 +397,11 @@ public class BlueAuto extends LinearOpMode {
                     TiltControl.setPosition(0.4);
                     follower.followPath(paths.Path7);
                     Pusher.setPosition(0.1);
+                    try {
+                        Thread.sleep(50);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
                     aimTimer.reset();
 
                     align = false;
@@ -448,7 +446,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-0.25);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -480,6 +478,7 @@ public class BlueAuto extends LinearOpMode {
 
                 case 8:
                     follower.followPath(paths.Path8);
+                    sleep(200);
                     pathState = 9;
                     break;
                 case 9:
@@ -498,6 +497,11 @@ public class BlueAuto extends LinearOpMode {
                     Intake.setPower(0);
                     follower.followPath(paths.Path10);
                     Pusher.setPosition(0.1);
+                    try {
+                        Thread.sleep(50);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
                     aimTimer.reset();
 
                     align = false;
@@ -545,7 +549,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-0.25);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -575,6 +579,7 @@ public class BlueAuto extends LinearOpMode {
                     break;
                 case 12:
                     follower.followPath(paths.Path11);
+                    sleep(200);
                     pathState = 13;
                     break;
                 case 13:
@@ -588,6 +593,11 @@ public class BlueAuto extends LinearOpMode {
                 case 14:
                     Intake.setPower(0);
                     Pusher.setPosition(0.1);
+                    try {
+                        Thread.sleep(50);
+                    } catch(InterruptedException e) {
+                        telemetry.addData("Warning","Sleeping interrupted:");
+                    }
                     aimTimer.reset();
 
                     align = false;
@@ -632,7 +642,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-0.25);
+                    Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -665,14 +675,6 @@ public class BlueAuto extends LinearOpMode {
                     follower.followPath(paths.Path14);
                     pathState++;
                     break;
-                case 16:
-                    follower.followPath(paths.Path16);
-                    pathState++;
-                    break;
-                case 17:
-                    follower.followPath(paths.Path17);
-                    pathState++;
-                    break; 
             }
         }
         return pathState;

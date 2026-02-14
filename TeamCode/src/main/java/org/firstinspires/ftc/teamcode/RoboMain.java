@@ -30,7 +30,7 @@ public class RoboMain extends LinearOpMode {
     double aimOffset;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
-    private DcMotor Intake;
+    private DcMotorEx Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
     private Servo Pusher, TiltControl;
     private DcMotorEx RightOuttake, LeftOuttake;
@@ -55,7 +55,7 @@ public class RoboMain extends LinearOpMode {
     private static final double PUSHER_OPEN = 0.47;
     private static final double PUSHER_HALF = 0.1;
     private static final double PUSHER_CLOSE = 0.45;
-    private static final double INTAKE_POWER = -0.5;
+    private static final double INTAKE_POWER = -1;
     private static final double RAMP_POWER = -1;
     private static final double PRECISION_DRIVE_SCALE = 0.45; // when left trigger pressed
     private static final double DEFAULT_DRIVE_SCALE = 1.0;// --- Debounce / toggle helpers ---
@@ -78,7 +78,7 @@ public class RoboMain extends LinearOpMode {
 
         imu = hardwareMap.get(IMU.class,"imu");
 
-        Intake = hardwareMap.get(DcMotor.class, "Intake");
+        Intake = hardwareMap.get(DcMotorEx.class, "Intake");
         BottomRampServo  = hardwareMap.get(CRServo.class, "BottomRampServo");
         BottomRampServo2 = hardwareMap.get(CRServo.class, "BottomRampServo2");
         helper3 = hardwareMap.get(CRServo.class, "helper3");
@@ -129,7 +129,7 @@ public class RoboMain extends LinearOpMode {
         boolean manual = false;
 //        RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         tiltIndex = 0;
         TiltControl.setPosition(TILT_POSITIONS[tiltIndex]);
@@ -177,13 +177,13 @@ public class RoboMain extends LinearOpMode {
             if (gamepad2.a || macroa || macrob ) {
                 if (gamepad2.right_bumper || gamepad1.right_bumper) {
                     if (manual) {
-                        Intake.setPower(INTAKE_POWER);
+                        Intake.setPower(-1);
                         BottomRampServo.setPower(RAMP_POWER);
                         BottomRampServo2.setPower(RAMP_POWER);
                         helper3.setPower(-RAMP_POWER);
                     }
                 } else {
-                    Intake.setPower(INTAKE_POWER);
+                    Intake.setPower(-1);
                     BottomRampServo.setPower(RAMP_POWER);
                     BottomRampServo2.setPower(RAMP_POWER);
                     helper3.setPower(-RAMP_POWER);
@@ -194,7 +194,7 @@ public class RoboMain extends LinearOpMode {
                 BottomRampServo2.setPower(0.6);
                 helper3.setPower(-0.6);
             } else {
-                Intake.setPower(0.01);
+                Intake.setPower(0);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
                 helper3.setPower(0);
