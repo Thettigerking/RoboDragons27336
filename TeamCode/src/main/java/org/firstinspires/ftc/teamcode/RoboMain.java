@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -26,7 +27,7 @@ import java.util.List;
 @TeleOp(name = "TheChosenTeleop")
 public class RoboMain extends LinearOpMode {
     double speed = 0;
-
+    double aimOffset;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotor Intake;
@@ -159,7 +160,6 @@ public class RoboMain extends LinearOpMode {
             double y = gamepad1.left_stick_y; // forward
             double x = -gamepad1.left_stick_x;  // strafe
             double rx = gamepad1.right_stick_x; // rotation
-
             double driveScale = (gamepad1.left_trigger > 0.1) ? PRECISION_DRIVE_SCALE : DEFAULT_DRIVE_SCALE;
 
             double denominator = Math.max(1.0, Math.abs(y) + Math.abs(x) + Math.abs(rx));
@@ -194,7 +194,7 @@ public class RoboMain extends LinearOpMode {
                 BottomRampServo2.setPower(0.6);
                 helper3.setPower(-0.6);
             } else {
-                Intake.setPower(0);
+                Intake.setPower(0.01);
                 BottomRampServo.setPower(0);
                 BottomRampServo2.setPower(0);
                 helper3.setPower(0);
@@ -207,7 +207,7 @@ public class RoboMain extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500) {
+            if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500 || gamepad2.left_trigger > 0 && distance < 500) {
 
                 macro = true;
 
@@ -227,7 +227,9 @@ public class RoboMain extends LinearOpMode {
                     // =========================
                     // AUTO ALIGN (P CONTROL)
                     // =========================
-                    double aimOffset = 1;   // degrees (positive = right, negative = left)
+                    if (gamepad2.right_trigger > 0) {
+                        aimOffset = 1;   // degrees (positive = right, negative = left)
+                    }
                     double tx = result.getTx() - aimOffset;   // Limelight angle error
 
                     // ---- TUNING VALUES ----
@@ -269,7 +271,6 @@ public class RoboMain extends LinearOpMode {
                 if (myTimer.milliseconds() >= 500) {
                     macroa = true;
                 }
-
             } else {
                 // =========================
                 // RESET WHEN TRIGGER RELEASED
@@ -278,45 +279,6 @@ public class RoboMain extends LinearOpMode {
                 macroa = false;
                 timerStarted = false;
 
-            }
-
-            if (gamepad2.left_trigger > 0 && distance < 500) {
-
-                macrob = true;
-                // Start timer ONCE
-                if (!timerStarteda) {
-                    myTimera.reset();
-                    timerStarteda = true;
-                }
-
-                // Drive alignment
-                if (result.getTx() >= 5.05) {
-                    leftFront.setPower(0.2);
-                    leftBack.setPower(0.2);
-                    rightBack.setPower(-0.2);
-                    rightFront.setPower(-0.2);
-                } else if (result.getTx() <= 0.05) {
-                    leftFront.setPower(-0.2);
-                    leftBack.setPower(-0.2);
-                    rightBack.setPower(0.2);
-                    rightFront.setPower(0.2);
-                } else {
-                    leftFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightBack.setPower(0);
-                    rightFront.setPower(0);
-                }
-
-                // AFTER 500 ms → allow intake
-                if (myTimera.milliseconds() >= 1000) {
-                    macroab = true;
-                }
-
-            } else {
-                // Reset everything when X is released
-                macrob = false;
-                macroab = false;
-                timerStarteda = false;
             }
 
 
@@ -419,11 +381,18 @@ public class RoboMain extends LinearOpMode {
                     LeftOuttake.setVelocity(speed * targetVelocity);
                 }
             } else {
+                if (gamepad2.right_trigger > 0) {
+                    Shooting shooting = new Shooting();
+                    TiltControl.setPosition(0.4);
+                    RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-20) * targetVelocity);
+                    LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-20) * targetVelocity);
+                } else if (gamepad2.left_trigger > 0) {
+                    Shooting shooting = new Shooting();
+                    TiltControl.setPosition(0.4);
+                    RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())) * targetVelocity);
+                    LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())) * targetVelocity);
+                }
 
-                Shooting shooting = new Shooting();
-                TiltControl.setPosition(0.4);
-                RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-25) * targetVelocity);
-                LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-25) * targetVelocity);
             }
 
         /*if (RightOuttake.getVelocity() > speed) {

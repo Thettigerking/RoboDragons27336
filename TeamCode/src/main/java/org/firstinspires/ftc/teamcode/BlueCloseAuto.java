@@ -105,64 +105,11 @@ public class BlueCloseAuto extends LinearOpMode {
             panelsTelemetry.update(telemetry);
         }
         while (opModeIsActive()) {
-            LLResult result = limelight.getLatestResult();
-            distance = distancem(result.getTa());
-            double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
-            double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
             LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
             RightOuttake.setDirection(DcMotor.Direction.REVERSE);
             TiltControl.setPosition(0.4);
             follower.update();
             autonomousPathUpdate();
-            Shooting mainteleop = new Shooting();
-            if (align) {
-                double tx = result.getTx();   // Limelight angle error
-
-                // ---- TUNING VALUES ----
-                double kP = 0.02;             // proportional gain
-                double minPower = 0.08;       // minimum turn power
-                double maxPower = 0.30;       // max turn power
-                double deadband = 0.5;        // degrees allowed error
-
-                if (Math.abs(tx) > deadband) {
-
-                    double turnPower = tx * kP;
-
-                    // Clamp to max power
-                    turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
-
-                    // Enforce minimum power
-                    if (Math.abs(turnPower) < minPower) {
-                        turnPower = Math.signum(turnPower) * minPower;
-                    }
-
-                    // Apply turn
-                    leftFront.setPower(turnPower);
-                    leftBack.setPower(turnPower);
-                    rightFront.setPower(-turnPower);
-                    rightBack.setPower(-turnPower);
-
-                } else {
-                    // Aligned
-                    leftFront.setPower(0);
-                    leftBack.setPower(0);
-                    rightFront.setPower(0);
-                    rightBack.setPower(0);
-                    Pusher.setPosition(0.1);
-                    BottomRampServo.setPower(-0.5);
-                    BottomRampServo2.setPower(-0.5);
-                    helper3.setPower(0.5);
-                    Intake.setPower(-0.5);
-                }
-            }
-            double voltage = 0;
-            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-                voltage = sensor.getVoltage();
-            }
-            double targetVelocity = 12.5/voltage;
-
-            RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-20) * targetVelocity);
-            LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-20)  * targetVelocity);
             // Log values to Panels and Driver Station
             panelsTelemetry.debug("Path State", pathState);
             panelsTelemetry.debug("X", follower.getPose().getX());
@@ -179,6 +126,12 @@ public class BlueCloseAuto extends LinearOpMode {
     public static class Paths {
         public PathChain Path1;
         public PathChain Path2;
+        public PathChain Path11;
+
+        public PathChain Path10;
+        public PathChain Path12;
+
+
 
 
         public Paths(Follower follower) {
@@ -193,35 +146,237 @@ public class BlueCloseAuto extends LinearOpMode {
                     ).setLinearHeadingInterpolation(Math.toRadians(250), Math.toRadians(300))
 
                     .build();
-            Path1 = follower.pathBuilder().addPath(
-                            new BezierLine(
-                                    new Pose(56.000, 15.000)
-                                    ,
+            Path10 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(56, 15), new Pose(41.000, 10.5))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(180))
+                    .build();
 
-                                    new Pose(56.000, 20.000)
-                            )
-                    ).setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(300))
+            Path11 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(41.000, 10.5), new Pose(6.5, 10.5))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .build();
 
+            Path12 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(6.5, 10.5), new Pose(56.000, 15))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(300))
                     .build();
         }
     }
 
+/*    Path10 = follower
+            .pathBuilder()
+            .addPath(
+                            new BezierLine(new Pose(56, 15), new Pose(41.000, 37.500))
+            )
+            .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(180))
+            .build();
 
+    Path11 = follower
+            .pathBuilder()
+            .addPath(
+                            new BezierLine(new Pose(41.000, 37.500), new Pose(6.5, 37.500))
+            )
+            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+            .build();
+
+    Path12 = follower
+            .pathBuilder()
+            .addPath(
+                            new BezierLine(new Pose(6.5, 37.500), new Pose(56.000, 15))
+            )
+            .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(300))
+            .build();*/
     public void autonomousPathUpdate() {
         if (!follower.isBusy()) {
+            double voltage = 0;
+            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+                voltage = sensor.getVoltage();
+            }
+            double targetVelocity = 12.5/voltage;
             switch (pathState) {
                 case 0:
+                    Intake.setPower(-1);
                     Pusher.setPosition(0.47);
                     follower.followPath(paths.Path2);
                     pathState = 1;
                     break;
                 case 1:
                     follower.pausePathFollowing();
-                    align = true;
+                    Intake.setPower(0);
+                    align = false;
+                    Pusher.setPosition(0.1);
 
+                    align = false;
+                    follower.pausePathFollowing();
+                    aimTimer.reset();
+                    TiltControl.setPosition(0.4);
+                    while(aimTimer.milliseconds() < 1000) {
+                        aimTimer.startTime();
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        Shooting mainteleop = new Shooting();
+                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-5) * targetVelocity);
+                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-5)  * targetVelocity);
+                        double tx = result.getTx()-0.85;   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.05;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband ) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    Intake.setPower(-1);
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    follower.resumePathFollowing();
+                    aimTimer.reset();
+                    while (aimTimer.milliseconds() < 1900) {
+                        aimTimer.startTime();
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        Shooting mainteleop = new Shooting();
+                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-9) * targetVelocity);
+                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-9)  * targetVelocity);
+                    }
+                    BottomRampServo.setPower(0);
+                    BottomRampServo2.setPower(0);
+                    helper3.setPower(0);
+                    RightOuttake.setPower(0);
+                    LeftOuttake.setPower(0);
+                    Pusher.setPosition(0.47);
                     pathState = 2;
                 case 2:
+                    follower.followPath(paths.Path10);
+                    pathState = 3;
+                    break;
+                case 3:
+                    follower.followPath(paths.Path11);
+                    pathState = 4;
+                    break;
+                case 4:
+                    follower.followPath(paths.Path12);
+                    pathState = 5;
+                    break;
+                case 5:
+                    follower.pausePathFollowing();
+                    Intake.setPower(0);
+                    align = false;
+                    Pusher.setPosition(0.1);
+
+                    align = false;
+                    follower.pausePathFollowing();
+                    aimTimer.reset();
+                    TiltControl.setPosition(0.4);
+                    while(aimTimer.milliseconds() < 500) {
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        Shooting mainteleop = new Shooting();
+                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))) * targetVelocity);
+                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())))  * targetVelocity);
+                        double tx = result.getTx()-1;   // Limelight angle error
+
+                        // ---- TUNING VALUES ----
+                        double kP = 0.02;             // proportional gain
+                        double minPower = 0.08;       // minimum turn power
+                        double maxPower = 0.30;       // max turn power
+                        double deadband = 0.1;        // degrees allowed error
+
+                        if (Math.abs(tx) > deadband) {
+
+                            double turnPower = tx * kP;
+
+                            // Clamp to max power
+                            turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                            // Enforce minimum power
+                            if (Math.abs(turnPower) < minPower) {
+                                turnPower = Math.signum(turnPower) * minPower;
+                            }
+
+                            // Apply turn
+                            leftFront.setPower(turnPower);
+                            leftBack.setPower(turnPower);
+                            rightFront.setPower(-turnPower);
+                            rightBack.setPower(-turnPower);
+
+                        } else {
+                            // Aligned
+                            leftFront.setPower(0);
+                            leftBack.setPower(0);
+                            rightFront.setPower(0);
+                            rightBack.setPower(0);
+                            align = true;
+                        }
+                    }
+                    Intake.setPower(-1);
+                    BottomRampServo.setPower(-1);
+                    BottomRampServo2.setPower(-1);
+                    helper3.setPower(1);
+                    follower.resumePathFollowing();
+                    aimTimer.reset();
+                    while (aimTimer.milliseconds() < 1900) {
+                        aimTimer.startTime();
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        Shooting mainteleop = new Shooting();
+                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))) * targetVelocity);
+                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())))  * targetVelocity);
+                    }
+                    BottomRampServo.setPower(0);
+                    BottomRampServo2.setPower(0);
+                    helper3.setPower(0);
+                    RightOuttake.setPower(0);
+                    LeftOuttake.setPower(0);
+                    Pusher.setPosition(0.47);
+                    pathState = 6;
+                    break;
             }
+
         }
     }
 

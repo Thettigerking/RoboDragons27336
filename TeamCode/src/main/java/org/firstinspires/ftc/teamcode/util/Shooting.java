@@ -32,7 +32,7 @@ public class Shooting {
                 return (10);
 
             } else if (RightCurrVeloc < sspeed - 100) {
-                return (sspeed + 265);
+                return (sspeed + 300);
 
             } else {
                 return (sspeed - 475);
