@@ -55,7 +55,7 @@ public class RoboMain extends LinearOpMode {
     private static final double PUSHER_OPEN = 0.47;
     private static final double PUSHER_HALF = 0.1;
     private static final double PUSHER_CLOSE = 0.45;
-    private static final double INTAKE_POWER = -1.0;
+    private static final double INTAKE_POWER = -0.5;
     private static final double RAMP_POWER = -1;
     private static final double PRECISION_DRIVE_SCALE = 0.45; // when left trigger pressed
     private static final double DEFAULT_DRIVE_SCALE = 1.0;// --- Debounce / toggle helpers ---

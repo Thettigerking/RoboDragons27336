@@ -269,7 +269,7 @@ public class RedAuto extends LinearOpMode {
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
                     //LeftOuttake.setVelocity(-860);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.followPath(paths.Path1);
 
                     pathState = 1;
@@ -331,7 +331,7 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
@@ -445,7 +445,7 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
@@ -546,7 +546,7 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
@@ -589,7 +589,7 @@ public class RedAuto extends LinearOpMode {
                     pathState = 14;
                     break;
                 case 14:
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     Pusher.setPosition(0.1);
                     try {
                         Thread.sleep(50);
@@ -640,7 +640,7 @@ public class RedAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {

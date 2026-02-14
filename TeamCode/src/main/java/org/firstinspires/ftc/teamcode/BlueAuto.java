@@ -282,7 +282,7 @@ public class BlueAuto extends LinearOpMode {
                     LeftOuttake.setVelocity(outtakespeed);
                     //RightOuttake.setVelocity(-860);
                     //LeftOuttake.setVelocity(-860);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.followPath(paths.Path1);
 
                     pathState = 1;
@@ -337,7 +337,7 @@ public class BlueAuto extends LinearOpMode {
                             align = true;
                         }
                     }
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
@@ -448,7 +448,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -545,7 +545,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
@@ -632,7 +632,7 @@ public class BlueAuto extends LinearOpMode {
                     BottomRampServo.setPower(-1);
                     BottomRampServo2.setPower(-1);
                     helper3.setPower(1);
-                    Intake.setPower(-1);
+                    Intake.setPower(-0.25);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
                         aimTimer.startTime();
