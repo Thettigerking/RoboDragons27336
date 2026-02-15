@@ -120,17 +120,17 @@ public class RoboMain extends LinearOpMode {
         double f = 14.4;
 
         RightOuttake.setVelocityPIDFCoefficients(
-                8.0,   // P
-                0.0,    // I
-                0.6,    // D
-                13.5    // F (THIS MATTERS)
+                p,   // P
+                i,    // I
+                d,    // D
+                f    // F (THIS MATTERS)
         );
 
         LeftOuttake.setVelocityPIDFCoefficients(
-                8.0,
-                0.0,
-                0.6,
-                13.5
+                p,
+                i,
+                d,
+                f
         );
         boolean manual = false;
 //        RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -362,38 +362,59 @@ public class RoboMain extends LinearOpMode {
         double targetVelocity = 11.5/voltage;
 
         if (distance < 90) {
+            RightOuttake.setVelocityPIDFCoefficients(
+                    8.0,   // P
+                    0.0,    // I
+                    0.6,    // D
+                    13.5    // F (THIS MATTERS)
+            );
+
+            LeftOuttake.setVelocityPIDFCoefficients(
+                    8.0,
+                    0.0,
+                    0.6,
+                    13.5
+            );
                 TiltControl.setPosition(.35);
             limelight.pipelineSwitch(0);
             if (RightOuttake.getVelocity() > speed + 25) {
-                    RightOuttake.setVelocity(0);
-                } else if (RightOuttake.getVelocity() < speed - 25) {
-                    RightOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
-                } else {
-                    RightOuttake.setVelocity(speed * targetVelocity);
-                }
-
-                if (LeftOuttake.getVelocity() > speed + 25) {
-                    LeftOuttake.setVelocity(0);
-                } else if (LeftOuttake.getVelocity() < speed - 25) {
-                    LeftOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
-                } else {
-                    LeftOuttake.setVelocity(speed * targetVelocity);
-                }
+                RightOuttake.setVelocity(0);
+            } else if (RightOuttake.getVelocity() < speed - 25) {
+                RightOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
             } else {
-            limelight.pipelineSwitch(0);
-            if (gamepad2.right_trigger > 0) {
-                    Shooting shooting = new Shooting();
-                    TiltControl.setPosition(0.4);
-                    RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-20) * targetVelocity);
-                    LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())-20) * targetVelocity);
-                } else if (gamepad2.left_trigger > 0) {
-                    Shooting shooting = new Shooting();
-                    TiltControl.setPosition(0.4);
-                    RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())) * targetVelocity);
-                    LeftOuttake.setVelocity((shooting.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())) * targetVelocity);
-                }
-
+                RightOuttake.setVelocity(speed * targetVelocity);
             }
+
+            if (LeftOuttake.getVelocity() > speed + 25) {
+                LeftOuttake.setVelocity(0);
+            } else if (LeftOuttake.getVelocity() < speed - 25) {
+                LeftOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
+            } else {
+                LeftOuttake.setVelocity(speed * targetVelocity);
+            }
+            } else {
+            double p = 15.6;
+            double i = 0;
+            double d = 0.8;
+            double f = 14.4;
+            RightOuttake.setVelocityPIDFCoefficients(
+                    p,   // P
+                    i,    // I
+                    d,    // D
+                    f    // F (THIS MATTERS)
+            );
+
+            LeftOuttake.setVelocityPIDFCoefficients(
+                    p,
+                    i,
+                    d,
+                    f
+            );
+            limelight.pipelineSwitch(0);
+                TiltControl.setPosition(0.4);
+                RightOuttake.setVelocity((speed-60)*targetVelocity);
+                LeftOuttake.setVelocity((speed-60)*targetVelocity);
+                }
 
         /*if (RightOuttake.getVelocity() > speed) {
             RightOuttake.setVelocity(distance * 8.3);
