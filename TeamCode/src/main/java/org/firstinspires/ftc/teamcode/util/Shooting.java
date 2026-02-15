@@ -29,10 +29,10 @@ public class Shooting {
 
         } else if (Objects.equals(shoottype, "BLUEFAR")) {
             if (RightCurrVeloc > sspeed + 100) {
-                return (10);
+                return (100);
 
             } else if (RightCurrVeloc < sspeed - 100) {
-                return (sspeed + 300);
+                return (sspeed + 50);
 
             } else {
                 return (sspeed - 475);
@@ -72,10 +72,11 @@ public class Shooting {
                 return (100);
 
             } else if (LeftCurrVeloc < sspeed - 100) {
-                return (sspeed + 275);
+                return (sspeed + 50);
 
             } else {
-                return (sspeed - 475);
+                return (sspeed - 375);
+
             }
         }
         return (0);

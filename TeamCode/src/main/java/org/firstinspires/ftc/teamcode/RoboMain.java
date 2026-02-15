@@ -28,6 +28,9 @@ import java.util.List;
 public class RoboMain extends LinearOpMode {
     double speed = 0;
     double aimOffset;
+    double rx;
+    double x;
+    double y;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotorEx Intake;
@@ -111,7 +114,10 @@ public class RoboMain extends LinearOpMode {
         RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        double p = 15.6;
+        double i = 0;
+        double d = 0.8;
+        double f = 14.4;
 
         RightOuttake.setVelocityPIDFCoefficients(
                 8.0,   // P
@@ -149,7 +155,6 @@ public class RoboMain extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             LLResult result = limelight.getLatestResult();
             distance = distancem(result.getTa());
             speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
@@ -157,9 +162,76 @@ public class RoboMain extends LinearOpMode {
             speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
             Pose3D botpose = result.getBotpose();
             final double[] OUTTAKE_POWERS = {(-0.57), (-0.45), (-0.35)};
-            double y = gamepad1.left_stick_y; // forward
-            double x = -gamepad1.left_stick_x;  // strafe
-            double rx = gamepad1.right_stick_x; // rotation
+              // strafe
+            if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500 || gamepad2.left_trigger > 0 && distance < 500) {
+
+                macro = true;
+
+                // Start timer ONCE
+                if (!timerStarted) {
+                    myTimer.reset();
+                    timerStarted = true;
+                }
+
+                // =========================
+                // MANUAL OVERRIDE
+                // =========================
+                if (gamepad2.right_bumper || gamepad1.right_bumper) {
+                    manual = gamepad2.a;
+                } else {
+
+                    // =========================
+                    // AUTO ALIGN (P CONTROL)
+                    // =========================
+                    if (gamepad2.right_trigger > 0) {
+                        aimOffset = 1;   // degrees (positive = right, negative = left)
+                    }
+                    double tx = result.getTx() - aimOffset;   // Limelight angle error
+
+                    // ---- TUNING VALUES ----
+                    double kP = 0.02;             // proportional gain
+                    double minPower = 0.08;       // minimum turn power
+                    double maxPower = 0.30;       // max turn power
+                    double deadband = 0.05;        // degrees allowed error
+
+                    if (Math.abs(tx) > deadband) {
+
+                        double turnPower = tx * kP;
+
+                        // Clamp to max power
+                        turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
+
+                        // Enforce minimum power
+                        if (Math.abs(turnPower) < minPower) {
+                            turnPower = Math.signum(turnPower) * minPower;
+                        }
+
+                        // Apply turn
+                        rx = turnPower;
+
+
+                    } else {
+                        rx = 0;
+                    }
+                }
+
+                // =========================
+                // DELAY BEFORE INTAKE
+                // =========================
+                if (myTimer.milliseconds() >= 500) {
+                    macroa = true;
+                }
+            } else {
+                // =========================
+                // RESET WHEN TRIGGER RELEASED
+                // =========================
+                macro = false;
+                macroa = false;
+                timerStarted = false;
+                rx = gamepad1.right_stick_x; // rotation
+            }
+            y = gamepad1.left_stick_y; // forward
+            x = -gamepad1.left_stick_x;
             double driveScale = (gamepad1.left_trigger > 0.1) ? PRECISION_DRIVE_SCALE : DEFAULT_DRIVE_SCALE;
 
             double denominator = Math.max(1.0, Math.abs(y) + Math.abs(x) + Math.abs(rx));
@@ -205,80 +277,6 @@ public class RoboMain extends LinearOpMode {
                 } else if (!pushervar) {
                     pushervar = true;
                 }
-            }
-
-            if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500 || gamepad2.left_trigger > 0 && distance < 500) {
-
-                macro = true;
-
-                // Start timer ONCE
-                if (!timerStarted) {
-                    myTimer.reset();
-                    timerStarted = true;
-                }
-
-                // =========================
-                // MANUAL OVERRIDE
-                // =========================
-                if (gamepad2.right_bumper || gamepad1.right_bumper) {
-                    manual = gamepad2.a;
-                } else {
-
-                    // =========================
-                    // AUTO ALIGN (P CONTROL)
-                    // =========================
-                    if (gamepad2.right_trigger > 0) {
-                        aimOffset = 1;   // degrees (positive = right, negative = left)
-                    }
-                    double tx = result.getTx() - aimOffset;   // Limelight angle error
-
-                    // ---- TUNING VALUES ----
-                    double kP = 0.02;             // proportional gain
-                    double minPower = 0.08;       // minimum turn power
-                    double maxPower = 0.30;       // max turn power
-                    double deadband = 0.05;        // degrees allowed error
-
-                    if (Math.abs(tx) > deadband) {
-
-                        double turnPower = tx * kP;
-
-                        // Clamp to max power
-                        turnPower = Math.max(-maxPower, Math.min(maxPower, turnPower));
-
-                        // Enforce minimum power
-                        if (Math.abs(turnPower) < minPower) {
-                            turnPower = Math.signum(turnPower) * minPower;
-                        }
-
-                        // Apply turn
-                        leftFront.setPower(turnPower);
-                        leftBack.setPower(turnPower);
-                        rightFront.setPower(-turnPower);
-                        rightBack.setPower(-turnPower);
-
-                    } else {
-                        // Aligned
-                        leftFront.setPower(0);
-                        leftBack.setPower(0);
-                        rightFront.setPower(0);
-                        rightBack.setPower(0);
-                    }
-                }
-
-                // =========================
-                // DELAY BEFORE INTAKE
-                // =========================
-                if (myTimer.milliseconds() >= 500) {
-                    macroa = true;
-                }
-            } else {
-                // =========================
-                // RESET WHEN TRIGGER RELEASED
-                // =========================
-                macro = false;
-                macroa = false;
-                timerStarted = false;
-
             }
 
 
@@ -365,7 +363,8 @@ public class RoboMain extends LinearOpMode {
 
         if (distance < 90) {
                 TiltControl.setPosition(.35);
-                if (RightOuttake.getVelocity() > speed + 25) {
+            limelight.pipelineSwitch(0);
+            if (RightOuttake.getVelocity() > speed + 25) {
                     RightOuttake.setVelocity(0);
                 } else if (RightOuttake.getVelocity() < speed - 25) {
                     RightOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
@@ -381,7 +380,8 @@ public class RoboMain extends LinearOpMode {
                     LeftOuttake.setVelocity(speed * targetVelocity);
                 }
             } else {
-                if (gamepad2.right_trigger > 0) {
+            limelight.pipelineSwitch(0);
+            if (gamepad2.right_trigger > 0) {
                     Shooting shooting = new Shooting();
                     TiltControl.setPosition(0.4);
                     RightOuttake.setVelocity((shooting.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity())-20) * targetVelocity);

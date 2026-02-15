@@ -1,5 +1,6 @@
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.TelemetryManager;
 import com.bylazar.telemetry.PanelsTelemetry;
+
+import org.firstinspires.ftc.robotcore.external.android.AndroidSoundPool;
 import org.firstinspires.ftc.teamcode.RoboMain;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -27,12 +30,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.io.File;
+
 @Autonomous(name = "Blue Far Autonomous", group = "Autonomous")
 @Configurable // Panels
 public class BlueCloseAuto extends LinearOpMode {
     private double outtakespeed = -890;
     public boolean autorunning = false;
-
+    File soundfile;
     double speed = 0;
     private Pose posevalue;
     private double headingvalue;
@@ -95,7 +100,10 @@ public class BlueCloseAuto extends LinearOpMode {
         LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
-
+        double p = 15.6;
+        double i = 0;
+        double d = 0.8;
+        double f = 14.4;
         waitForStart();
         while (opModeInInit()) {
             follower.updatePose();
@@ -105,6 +113,19 @@ public class BlueCloseAuto extends LinearOpMode {
             panelsTelemetry.update(telemetry);
         }
         while (opModeIsActive()) {
+            RightOuttake.setVelocityPIDFCoefficients(
+                    p,   // P
+                    i,    // I
+                    d,    // D
+                    f    // F (THIS MATTERS)
+            );
+
+            LeftOuttake.setVelocityPIDFCoefficients(
+                    p,
+                    i,
+                    d,
+                    f
+            );
             LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
             RightOuttake.setDirection(DcMotor.Direction.REVERSE);
             TiltControl.setPosition(0.4);
@@ -130,6 +151,10 @@ public class BlueCloseAuto extends LinearOpMode {
 
         public PathChain Path10;
         public PathChain Path12;
+        public PathChain Path13;
+        public PathChain Path14;
+
+
 
 
 
@@ -155,6 +180,20 @@ public class BlueCloseAuto extends LinearOpMode {
                     .build();
 
             Path11 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(41.000, 10.5), new Pose(6.5, 10.5))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .build();
+            Path13 = follower
+                    .pathBuilder()
+                    .addPath(
+                            new BezierLine(new Pose(6.5, 10.5), new Pose(41, 10.5))
+                    )
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .build();
+            Path14 = follower
                     .pathBuilder()
                     .addPath(
                             new BezierLine(new Pose(41.000, 10.5), new Pose(6.5, 10.5))
@@ -226,8 +265,8 @@ public class BlueCloseAuto extends LinearOpMode {
                         double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
                         double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
                         Shooting mainteleop = new Shooting();
-                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-5) * targetVelocity);
-                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-5)  * targetVelocity);
+                        RightOuttake.setVelocity(speed-105);
+                        LeftOuttake.setVelocity(speed-105);
                         double tx = result.getTx()-0.85;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
@@ -276,14 +315,15 @@ public class BlueCloseAuto extends LinearOpMode {
                         double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
                         double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
                         Shooting mainteleop = new Shooting();
-                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))-9) * targetVelocity);
-                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity()))-9)  * targetVelocity);
+                        RightOuttake.setVelocity(speed-105);
+                        LeftOuttake.setVelocity(speed-105);
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
                     helper3.setPower(0);
                     RightOuttake.setPower(0);
                     LeftOuttake.setPower(0);
+                    Intake.setPower(-1);
                     Pusher.setPosition(0.47);
                     pathState = 2;
                 case 2:
@@ -292,6 +332,14 @@ public class BlueCloseAuto extends LinearOpMode {
                     break;
                 case 3:
                     follower.followPath(paths.Path11);
+                    pathState = 6;
+                    break;
+                case 6:
+                    follower.followPath(paths.Path13);
+                    pathState = 7;
+                    break;
+                case 7:
+                    follower.followPath(paths.Path14);
                     pathState = 4;
                     break;
                 case 4:
@@ -314,8 +362,8 @@ public class BlueCloseAuto extends LinearOpMode {
                         double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
                         double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
                         Shooting mainteleop = new Shooting();
-                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))) * targetVelocity);
-                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())))  * targetVelocity);
+                        RightOuttake.setVelocity(speed-105);
+                        LeftOuttake.setVelocity(speed-105);
                         double tx = result.getTx()-1;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
@@ -364,8 +412,8 @@ public class BlueCloseAuto extends LinearOpMode {
                         double speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
                         double speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
                         Shooting mainteleop = new Shooting();
-                        RightOuttake.setVelocity(((mainteleop.outtake(speedx,speed,"REDFAR",RightOuttake.getVelocity()))) * targetVelocity);
-                        LeftOuttake.setVelocity(((mainteleop.outtakeleft(speedx,speed,"REDFAR",LeftOuttake.getVelocity())))  * targetVelocity);
+                        RightOuttake.setVelocity(speed-105);
+                        LeftOuttake.setVelocity(speed-105);
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);

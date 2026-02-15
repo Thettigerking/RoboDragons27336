@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.util.Shooting;
@@ -131,11 +132,11 @@ public class SpeedChanger extends LinearOpMode {
         TiltControl.setPosition(TILT_POSITIONS[tiltIndex]);
         boolean macro = false;
         boolean macrob = false;
-        double p = 8;
+        double p = 15.6;
         double i = 0;
-        double d = 0.6;
-        double f = 13.5;
-
+        double d = 0.8;
+        double f = 14.4;
+        double speedsubtract = 105;
         Pusher.setPosition(PUSHER_OPEN);
         limelight.start();
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
@@ -150,12 +151,12 @@ public class SpeedChanger extends LinearOpMode {
 
         while (opModeIsActive()) {
             double[] decreasetype = {0.01, 0.1, 1};
-            if (gamepad1.start) {
-                state = state + 1;
-                if (state > 3) {
+            //if (gamepad1.start) {
+             //   state = state + 1;
+              //  if (state > 3) {
                     state = 1;
-                }
-            }
+               // }
+            //}
             LLResult result = limelight.getLatestResult();
             distance = distancem(result.getTa());
             speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
@@ -189,14 +190,20 @@ public class SpeedChanger extends LinearOpMode {
             if (gamepad1.dpadUpWasReleased()) {
                 d = d + decreasetype[state];
             }
-            if (gamepad1.dpadUpWasReleased()) {
+            if (gamepad1.dpadDownWasReleased()) {
                 d = d - decreasetype[state];
             }
             if (gamepad1.leftBumperWasReleased()) {
                 f = f + decreasetype[state];
             }
-            if (gamepad1.right_bumper) {
+            if (gamepad1.rightBumperWasReleased()) {
                 f = f - decreasetype[state];
+            }
+            if (gamepad1.dpadLeftWasReleased()) {
+                speedsubtract = speedsubtract + 1;
+            }
+            if (gamepad1.dpadRightWasReleased()) {
+                speedsubtract = speedsubtract - 1;
             }
 
             if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500) {
@@ -310,8 +317,15 @@ public class SpeedChanger extends LinearOpMode {
                 Pusher.setPosition(PUSHER_OPEN);
             }
 
-            LeftOuttake.setVelocity(speed);
-            RightOuttake.setVelocity(speed);
+            LeftOuttake.setVelocity(speed-speedsubtract);
+            RightOuttake.setVelocity(speed-speedsubtract);
+            telemetry.addData("P: ",p);
+            telemetry.addData("I: ",i);
+            telemetry.addData("D: ",d);
+            telemetry.addData("F: ",f);
+            telemetry.addData("speedsubtract:",speedsubtract);
+            telemetry.update();
+
         }
     }
     public double distancem(double x) {
