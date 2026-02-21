@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.util.Shooting;
 @TeleOp(name = "SpeedChanger")
 public class SpeedChanger extends LinearOpMode {
     double speed = 0;
-
+    double aimOffset;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotor Intake;
@@ -139,11 +139,11 @@ public class SpeedChanger extends LinearOpMode {
         TiltControl.setPosition(TILT_POSITIONS[tiltIndex]);
         boolean macro = false;
         boolean macrob = false;
-        double p = 15.6;
+        double p = 16.4;
         double i = 0;
-        double d = 0.8;
-        double f = 14.4;
-        double speedsubtract = 105;
+        double d = 9.8;
+        double f = 13.8;
+        double speedsubtract = 0.98;
         Pusher.setPosition(PUSHER_OPEN);
         limelight.start();
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
@@ -209,10 +209,10 @@ public class SpeedChanger extends LinearOpMode {
                 f = f - decreasetype[state];
             }
             if (gamepad1.dpadLeftWasReleased()) {
-                speedsubtract = speedsubtract + 1;
+                speedsubtract = speedsubtract + 0.01;
             }
             if (gamepad1.dpadRightWasReleased()) {
-                speedsubtract = speedsubtract - 1;
+                speedsubtract = speedsubtract - 0.01;
             }
 
             if (gamepad2.right_trigger > 0 && distance < 500 || gamepad2.b && distance < 500) {
@@ -235,14 +235,19 @@ public class SpeedChanger extends LinearOpMode {
                     // =========================
                     // AUTO ALIGN (P CONTROL)
                     // =========================
-                    double aimOffset = 1;   // degrees (positive = right, negative = left)
+                    if (gamepad2.right_trigger > 0) {
+                        aimOffset = 8;   // degrees (positive = right, negative = left)
+                    } else if (gamepad2.left_trigger > 0) {
+                        aimOffset = 2;   // degrees (positive = right, negative = left)
+
+                    }
                     double tx = result.getTx() - aimOffset;   // Limelight angle error
 
                     // ---- TUNING VALUES ----
                     double kP = 0.02;             // proportional gain
                     double minPower = 0.08;       // minimum turn power
                     double maxPower = 0.30;       // max turn power
-                    double deadband = 0.05;        // degrees allowed error
+                    double deadband = 0.005;    // degrees allowed error
 
                     if (Math.abs(tx) > deadband) {
 
@@ -382,8 +387,8 @@ public class SpeedChanger extends LinearOpMode {
                 Pusher.setPosition(PUSHER_OPEN);
             }
 
-            LeftOuttake.setVelocity(speed-speedsubtract);
-            RightOuttake.setVelocity(speed-speedsubtract);
+            LeftOuttake.setVelocity(speed*speedsubtract);
+            RightOuttake.setVelocity(speed*speedsubtract);
             telemetry.addData("P: ",p);
             telemetry.addData("I: ",i);
             telemetry.addData("D: ",d);

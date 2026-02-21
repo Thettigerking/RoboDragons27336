@@ -568,6 +568,8 @@ public class RoboMain extends LinearOpMode {
     double rx;
     double x;
     double y;
+    String RightStatus;
+    String LeftStatus;
     private IMU imu;
     private DcMotor leftFront, leftBack, rightFront, rightBack;
     private DcMotorEx Intake;
@@ -716,6 +718,7 @@ public class RoboMain extends LinearOpMode {
                 }
 
                 // =========================
+
                 // MANUAL OVERRIDE
                 // =========================
                 if (gamepad2.right_bumper || gamepad1.right_bumper) {
@@ -726,9 +729,9 @@ public class RoboMain extends LinearOpMode {
                     // AUTO ALIGN (P CONTROL)
                     // =========================
                     if (gamepad2.right_trigger > 0) {
-                        aimOffset = 1.5;   // degrees (positive = right, negative = left)
+                        aimOffset = 8;   // degrees (positive = right, negative = left)
                     } else if (gamepad2.left_trigger > 0) {
-                        aimOffset = 0;   // degrees (positive = right, negative = left)
+                        aimOffset = 2;   // degrees (positive = right, negative = left)
 
                     }
                     double tx = result.getTx() - aimOffset;   // Limelight angle error
@@ -737,7 +740,7 @@ public class RoboMain extends LinearOpMode {
                     double kP = 0.02;             // proportional gain
                     double minPower = 0.08;       // minimum turn power
                     double maxPower = 0.30;       // max turn power
-                    double deadband = 0.05;        // degrees allowed error
+                    double deadband = 0.001;        // degrees allowed error
 
                     if (Math.abs(tx) > deadband) {
 
@@ -819,11 +822,11 @@ public class RoboMain extends LinearOpMode {
                     BottomRampServo2.setPower(RAMP_POWER);
                     helper3.setPower(-RAMP_POWER);
                 }
+                double targetVel = (speed - 30);// * (11.5 / getBatteryVoltage());
 
                 // Rapid fire pusher
                 if (intakeEnabled &&
-                        Math.abs(RightOuttake.getVelocity() - speed) < 40) {
-
+                Math.abs(RightOuttake.getVelocity() - targetVel) < 30) {
                     if (!pusherOut) {
                         Pusher.setPosition(PUSHER_HALF);
                         shootTimer.reset();
@@ -939,11 +942,8 @@ public class RoboMain extends LinearOpMode {
             telemetry.addData("Left outtake velocity:",LeftOuttake.getVelocity());
             telemetry.addData("Speedx",speedx);
             telemetry.addData("tx:",result.getTx());
-            telemetry.addData("Orentation",botpose.getOrientation());
-            telemetry.addData("Pitch",botpose.getOrientation().getPitch());
-            telemetry.addData("yaw",botpose.getOrientation().getYaw());
-            telemetry.addData("roll",botpose.getOrientation().getRoll());
-
+            telemetry.addData("LeftOuttakeStatus",LeftStatus);
+            telemetry.addData("RightOuttakeStatus",RightStatus);
             telemetry.update();
         }
     }
@@ -955,13 +955,13 @@ public class RoboMain extends LinearOpMode {
         //} else if (RightOuttake.getVelocity() < speed-25) {
         //    RightOuttake.setPower(.75);
         //} else {
-        double voltage = 0;
+        /*double voltage = 0;
         for (VoltageSensor sensor : hardwareMap.voltageSensor) {
             voltage = sensor.getVoltage();
         }
-        double targetVelocity = 11.5/voltage;
+        double targetVelocity = 11.5/voltage;*/
 
-        if (distance < 90) {
+        if (gamepad2.right_trigger > 0) {
             RightOuttake.setVelocityPIDFCoefficients(
                     8.0,   // P
                     0.0,    // I
@@ -977,22 +977,29 @@ public class RoboMain extends LinearOpMode {
             );
             TiltControl.setPosition(.35);
             limelight.pipelineSwitch(0);
-            if (RightOuttake.getVelocity() > speed + 25) {
+            /*if (RightOuttake.getVelocity() > speed + 15) {
                 RightOuttake.setVelocity(0);
-            } else if (RightOuttake.getVelocity() < speed - 25) {
-                RightOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
+                RightStatus = "Decreasing speed";
+            } else*/ if (RightOuttake.getVelocity() < speed - 65) {
+                RightOuttake.setVelocity((speed + (speed * speedx-30))); //* targetVelocity);
+                RightStatus = "Increasing speed";
             } else {
-                RightOuttake.setVelocity(speed * targetVelocity);
+                RightOuttake.setVelocity((speed-30)); //* targetVelocity);
+                RightStatus = "Shooting accurate";
+
             }
 
-            if (LeftOuttake.getVelocity() > speed + 25) {
+            /*if (LeftOuttake.getVelocity() > speed + 15) {
                 LeftOuttake.setVelocity(0);
-            } else if (LeftOuttake.getVelocity() < speed - 25) {
-                LeftOuttake.setVelocity((speed + (speed * speedx)) * targetVelocity);
+                LeftStatus = "Decreasing speed";
+            } else*/ if (LeftOuttake.getVelocity() < speed - 65) {
+                LeftOuttake.setVelocity((speed + (speed * speedx-30))); //* targetVelocity);
+                LeftStatus = "Increasing speed";
             } else {
-                LeftOuttake.setVelocity(speed * targetVelocity);
+                LeftOuttake.setVelocity((speed-30)); //* targetVelocity);
+                LeftStatus = "Shooting accurate";
             }
-        } else {
+        } else if (gamepad2.left_trigger > 0){
             double p = 15.6;
             double i = 0;
             double d = 0.8;
@@ -1013,8 +1020,8 @@ public class RoboMain extends LinearOpMode {
 
             limelight.pipelineSwitch(2);
             TiltControl.setPosition(0.4);
-            RightOuttake.setVelocity((speed-75)*targetVelocity);
-            LeftOuttake.setVelocity((speed-75)*targetVelocity);
+            RightOuttake.setVelocity((speed-65));//*targetVelocity);
+            LeftOuttake.setVelocity((speed-65));//*targetVelocity);
         }
 
         /*if (RightOuttake.getVelocity() > speed) {
@@ -1061,6 +1068,13 @@ public class RoboMain extends LinearOpMode {
     public double distancem(double x) {
         double AprilTagDistance = Math.pow((x/2604.88382),-0.5367);
         return AprilTagDistance;
+    }
+    private double getBatteryVoltage() {
+        double voltage = 0;
+        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
+            voltage = sensor.getVoltage();
+        }
+        return voltage;
     }
 }
 
