@@ -43,7 +43,14 @@ public class SpeedChanger extends LinearOpMode {
 
 
 
+    boolean intakeActive;
+    boolean pusherExtended;
+    private ElapsedTime spinupTimer = new ElapsedTime();
+    private ElapsedTime shootTimer = new ElapsedTime();
 
+    private boolean shooting = false;
+    private boolean intakeEnabled = false;
+    private boolean pusherOut = false;
 
     private static boolean pushervar = false;
     private static final double[] TILT_POSITIONS = {0.45, 0.25, 0.2};
@@ -145,7 +152,9 @@ public class SpeedChanger extends LinearOpMode {
         telemetry.update();
         LeftOuttake.setDirection(DcMotor.Direction.FORWARD);
         RightOuttake.setDirection(DcMotor.Direction.REVERSE);
-        TiltControl.setPosition(.35);
+        LeftOuttake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        RightOuttake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        TiltControl.setPosition(.4);
 
         waitForStart();
 
@@ -279,30 +288,86 @@ public class SpeedChanger extends LinearOpMode {
 
             }
 
-            if (gamepad2.a || macroa || macrob ) {
-                if (gamepad2.right_bumper || gamepad1.right_bumper) {
-                    if (manual) {
-                        Intake.setPower(INTAKE_POWER);
-                        BottomRampServo.setPower(RAMP_POWER);
-                        BottomRampServo2.setPower(RAMP_POWER);
-                        helper3.setPower(-RAMP_POWER);
-                    }
-                } else {
+            boolean shootButton =
+                    gamepad2.right_trigger > 0 ||
+                            gamepad2.left_trigger > 0 ||
+                            gamepad2.b;
+
+            if (shootButton) {
+
+                // First press
+                if (!shooting) {
+                    shooting = true;
+                    intakeEnabled = false;
+                    spinupTimer.reset();
+                    shootTimer.reset();
+                }
+
+                // Spin flywheel
+                // Enable intake AFTER 500ms
+                if (!intakeEnabled && spinupTimer.milliseconds() > 500) {
+                    intakeEnabled = true;
+                }
+
+                // Run intake once enabled
+                if (intakeEnabled) {
                     Intake.setPower(INTAKE_POWER);
                     BottomRampServo.setPower(RAMP_POWER);
                     BottomRampServo2.setPower(RAMP_POWER);
                     helper3.setPower(-RAMP_POWER);
                 }
-            } else if (gamepad2.y) {
-                Intake.setPower(0.6);
-                BottomRampServo.setPower(0.6);
-                BottomRampServo2.setPower(0.6);
-                helper3.setPower(-0.6);
+
+                // Rapid fire pusher
+                if (intakeEnabled &&
+                        Math.abs(RightOuttake.getVelocity() - speed) < 40) {
+
+                    if (!pusherOut) {
+                        Pusher.setPosition(PUSHER_HALF);
+                        shootTimer.reset();
+                        pusherOut = true;
+                    }
+
+                    if (pusherOut && shootTimer.milliseconds() > 120) {
+                        Pusher.setPosition(PUSHER_OPEN);
+                    }
+
+                    if (shootTimer.milliseconds() > 240) {
+                        pusherOut = false;
+                    }
+                }
+
             } else {
-                Intake.setPower(0);
-                BottomRampServo.setPower(0);
-                BottomRampServo2.setPower(0);
-                helper3.setPower(0);
+
+                // Stop shooter
+                shooting = false;
+                intakeEnabled = false;
+                pusherOut = false;
+
+                Pusher.setPosition(PUSHER_OPEN);
+                RightOuttake.setVelocity(0);
+                LeftOuttake.setVelocity(0);
+
+                // =============================
+                // MANUAL INTAKE CONTROL
+                // =============================
+                if (gamepad2.a) {
+                    Intake.setPower(INTAKE_POWER);
+                    BottomRampServo.setPower(RAMP_POWER);
+                    BottomRampServo2.setPower(RAMP_POWER);
+                    helper3.setPower(-RAMP_POWER);
+
+                } else if (gamepad2.y) {
+                    Intake.setPower(-INTAKE_POWER);
+                    BottomRampServo.setPower(-RAMP_POWER);
+                    BottomRampServo2.setPower(-RAMP_POWER);
+                    helper3.setPower(RAMP_POWER);
+
+                } else {
+                    Intake.setPower(0);
+                    BottomRampServo.setPower(0);
+                    BottomRampServo2.setPower(0);
+                    helper3.setPower(0);
+                }
             }
             if (gamepad2.right_bumper) {
                 if (pushervar) {

@@ -27,7 +27,10 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 @Autonomous(name = "Blue Autonomous", group = "Autonomous")
 @Configurable // Panels
 public class BlueAuto extends LinearOpMode {
-    private double outtakespeed = -890+15;
+    double speed;
+    double speedx;
+    double distance;
+    private double outtakespeed = 890-15;
     private DcMotor Intake;
     private CRServo BottomRampServo, BottomRampServo2, helper3;
     private boolean align = false;
@@ -68,6 +71,7 @@ public class BlueAuto extends LinearOpMode {
         RightOuttake = hardwareMap.get(DcMotorEx.class, "Right Motor Outtake");
         LeftOuttake  = hardwareMap.get(DcMotorEx.class, "Left Motor Outtake");
 
+
         LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
@@ -76,7 +80,8 @@ public class BlueAuto extends LinearOpMode {
         limelight.start();
         RightOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LeftOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        LeftOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
+        LeftOuttake.setDirection(DcMotorSimple.Direction.FORWARD);
+        RightOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
         waitForStart();
@@ -98,7 +103,23 @@ public class BlueAuto extends LinearOpMode {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            double p = 17;
+            double i = 0.1;
+            double d = 1.2;
+            double f = 14;
+            RightOuttake.setVelocityPIDFCoefficients(
+                    p,   // P
+                    i,    // I
+                    d,    // D
+                    f    // F (THIS MATTERS)
+            );
 
+            LeftOuttake.setVelocityPIDFCoefficients(
+                    p,
+                    i,
+                    d,
+                    f
+            );
             // Log values to Panels and Driver Station
             panelsTelemetry.debug("Path State", pathState);
             panelsTelemetry.debug("X", follower.getPose().getX());
@@ -138,19 +159,19 @@ public class BlueAuto extends LinearOpMode {
                     .addPath(
                             new BezierLine(posevalue, new Pose(48.000, 106))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(312))
+                    .setLinearHeadingInterpolation(Math.toRadians(headingvalue), Math.toRadians(325))
                     .build();
             Path15 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(48.000, 106), new Pose(54, 98))
+                            new BezierLine(new Pose(48.000, 106), new Pose(56, 96))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(315))
+                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(315))
                     .build();
             Path2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(54, 98), new Pose(48.000, 83.000))
+                            new BezierLine(new Pose(56, 96), new Pose(48.000, 83.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
                     .build();
@@ -174,7 +195,7 @@ public class BlueAuto extends LinearOpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(35.000, 79.000), new Pose(15.00, 74.000))
+                            new BezierLine(new Pose(35.000, 79.000), new Pose(14.00, 74.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
@@ -182,17 +203,17 @@ public class BlueAuto extends LinearOpMode {
             Path6 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.00, 74.000), new Pose(52.000, 92.000))
+                            new BezierLine(new Pose(14.00, 74.000), new Pose(56, 92))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(322.25))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(325))
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(52.000, 92.000), new Pose(48.000, 60))
+                            new BezierLine(new Pose(56, 92.000), new Pose(48.000, 60))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(322.25), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(180))
                     .build();
             Path8 = follower
                     .pathBuilder()
@@ -212,7 +233,7 @@ public class BlueAuto extends LinearOpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 60), new Pose(52.000, 92.000))
+                            new BezierLine(new Pose(20, 60), new Pose(56, 92))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(329))
                     .build();
@@ -220,7 +241,7 @@ public class BlueAuto extends LinearOpMode {
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(52.000, 92.000), new Pose(41.000, 37.500))
+                            new BezierLine(new Pose(56.000, 92.000), new Pose(41.000, 37.500))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(329), Math.toRadians(180))
                     .build();
@@ -236,14 +257,14 @@ public class BlueAuto extends LinearOpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(6.5, 37.500), new Pose(52.000, 92.000))
+                            new BezierLine(new Pose(6.5, 37.500), new Pose(56, 92))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(325))
                     .build();
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(52, 92), new Pose(24, 88.000))
+                            new BezierLine(new Pose(56, 92), new Pose(24, 88.000))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(325), Math.toRadians(90))
                     .build();
@@ -252,11 +273,6 @@ public class BlueAuto extends LinearOpMode {
     }
 
     public int autonomousPathUpdate() throws InterruptedException {
-        double voltage = 0;
-        for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-            voltage = sensor.getVoltage();
-        }
-        double targetVelocity = 12.5/voltage;
         if (!follower.isBusy()) {
             switch (pathState) {
                 case 0:
@@ -293,7 +309,7 @@ public class BlueAuto extends LinearOpMode {
                     TiltControl.setPosition(0.4);
                     while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
-                        double tx = result.getTx();   // Limelight angle error
+                        double tx = result.getTx() - 3;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain
@@ -335,22 +351,13 @@ public class BlueAuto extends LinearOpMode {
                     follower.resumePathFollowing();
                     aimTimer.reset();
                     while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1300 * targetVelocity);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(0);
-                        } else {
-                            RightOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1300 * targetVelocity);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(0);
-                        } else {
-                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        RightOuttake.setVelocity((speed-26));
+                        LeftOuttake.setVelocity((speed-26));
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -408,7 +415,7 @@ public class BlueAuto extends LinearOpMode {
                     follower.pausePathFollowing();
                     while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
-                        double tx = result.getTx();   // Limelight angle error
+                        double tx = result.getTx() - 3;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain
@@ -449,22 +456,13 @@ public class BlueAuto extends LinearOpMode {
                     Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1120 * targetVelocity);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-520 * targetVelocity);
-                        } else {
-                            RightOuttake.setVelocity((outtakespeed+100) * targetVelocity);
-                        }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1120 * targetVelocity);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550  * targetVelocity);
-                        } else {
-                            LeftOuttake.setVelocity((outtakespeed+100)  * targetVelocity);
-                        }
-
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        RightOuttake.setVelocity((speed-26));
+                        LeftOuttake.setVelocity((speed-26));
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -508,7 +506,7 @@ public class BlueAuto extends LinearOpMode {
                     follower.pausePathFollowing();
                     while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
-                        double tx = result.getTx();   // Limelight angle error
+                        double tx = result.getTx() - 3;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain
@@ -552,22 +550,13 @@ public class BlueAuto extends LinearOpMode {
                     Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1130 * targetVelocity);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-550 * targetVelocity);
-                        } else {
-                            RightOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1130 * targetVelocity);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550 * targetVelocity);
-                        } else {
-                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        RightOuttake.setVelocity((speed-26));
+                        LeftOuttake.setVelocity((speed-26));
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -604,7 +593,7 @@ public class BlueAuto extends LinearOpMode {
                     follower.pausePathFollowing();
                     while(aimTimer.milliseconds() < 500) {
                         LLResult result = limelight.getLatestResult();
-                        double tx = result.getTx();   // Limelight angle error
+                        double tx = result.getTx() - 1.5;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain
@@ -645,22 +634,13 @@ public class BlueAuto extends LinearOpMode {
                     Intake.setPower(-1);
                     follower.resumePathFollowing();
                     while (aimTimer.milliseconds() < 1900) {
-                        aimTimer.startTime();
-                        if (RightOuttake.getVelocity() > outtakespeed) {
-                            RightOuttake.setVelocity(-1130 * targetVelocity);
-                        } else if (RightOuttake.getVelocity() < outtakespeed) {
-                            RightOuttake.setVelocity(-550 * targetVelocity);
-                        } else {
-                            RightOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-                        if (LeftOuttake.getVelocity() > outtakespeed) {
-                            LeftOuttake.setVelocity(-1130 * targetVelocity);
-                        } else if (LeftOuttake.getVelocity() < outtakespeed) {
-                            LeftOuttake.setVelocity(-550 * targetVelocity);
-                        } else {
-                            LeftOuttake.setVelocity(outtakespeed * targetVelocity);
-                        }
-
+                        LLResult result = limelight.getLatestResult();
+                        distance = distancem(result.getTa());
+                        speedx = (-0.0000182763 * (distance * distance)) + (0.003602 * distance) - 0.0113504;
+                        //speed = (4.4 * distance) + 740;
+                        speed = (0.0061376 * (distance * distance)) + (2.66667 * distance) + 800.7619;
+                        RightOuttake.setVelocity((speed-26));
+                        LeftOuttake.setVelocity((speed-26));
                     }
                     BottomRampServo.setPower(0);
                     BottomRampServo2.setPower(0);
@@ -679,5 +659,8 @@ public class BlueAuto extends LinearOpMode {
         }
         return pathState;
     }
-
+    public double distancem(double x) {
+        double AprilTagDistance = Math.pow((x/2604.88382),-0.5367);
+        return AprilTagDistance;
+    }
 }
