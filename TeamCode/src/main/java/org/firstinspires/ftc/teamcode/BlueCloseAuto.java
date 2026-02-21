@@ -166,7 +166,7 @@ public class BlueCloseAuto extends LinearOpMode {
                             new BezierLine(
                                     posevalue,
 
-                                    new Pose(56.000, 15.000)
+                                    new Pose(56.000, 20)
                             )
                     ).setLinearHeadingInterpolation(Math.toRadians(250), Math.toRadians(300))
 
@@ -174,7 +174,7 @@ public class BlueCloseAuto extends LinearOpMode {
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(56, 15), new Pose(41.000, 10.5))
+                            new BezierLine(new Pose(56, 20), new Pose(41.000, 10.5))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(180))
                     .build();
@@ -189,14 +189,14 @@ public class BlueCloseAuto extends LinearOpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(6.5, 10.5), new Pose(41, 10.5))
+                            new BezierLine(new Pose(6.5, 10.5), new Pose(30, 10.5))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
             Path14 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.000, 10.5), new Pose(6.5, 10.5))
+                            new BezierLine(new Pose(30, 10.5), new Pose(6.5, 10.5))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
@@ -204,7 +204,7 @@ public class BlueCloseAuto extends LinearOpMode {
             Path12 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(6.5, 10.5), new Pose(56.000, 15))
+                            new BezierLine(new Pose(6.5, 10.5), new Pose(56.000, 20))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(300))
                     .build();
@@ -235,12 +235,7 @@ public class BlueCloseAuto extends LinearOpMode {
             .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(300))
             .build();*/
     public void autonomousPathUpdate() {
-        if (!follower.isBusy()) {
-            double voltage = 0;
-            for (VoltageSensor sensor : hardwareMap.voltageSensor) {
-                voltage = sensor.getVoltage();
-            }
-            double targetVelocity = 12.5/voltage;
+        if (!follower.isBusy()) {;
             switch (pathState) {
                 case 0:
                     Intake.setPower(-1);
@@ -267,7 +262,7 @@ public class BlueCloseAuto extends LinearOpMode {
                         Shooting mainteleop = new Shooting();
                         RightOuttake.setVelocity(speed-105);
                         LeftOuttake.setVelocity(speed-105);
-                        double tx = result.getTx()-0.85;   // Limelight angle error
+                        double tx = result.getTx()-3;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain
@@ -364,7 +359,7 @@ public class BlueCloseAuto extends LinearOpMode {
                         Shooting mainteleop = new Shooting();
                         RightOuttake.setVelocity(speed-105);
                         LeftOuttake.setVelocity(speed-105);
-                        double tx = result.getTx()-1;   // Limelight angle error
+                        double tx = result.getTx()-3;   // Limelight angle error
 
                         // ---- TUNING VALUES ----
                         double kP = 0.02;             // proportional gain

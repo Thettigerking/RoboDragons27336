@@ -233,17 +233,17 @@ public class RedAuto extends LinearOpMode {
             Path13 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(20, 63-2).mirror(), new Pose(52, 92-2).mirror())
+                            new BezierLine(new Pose(20, 63-2).mirror(), new Pose(56, 90-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(317-90))
+                    .setLinearHeadingInterpolation(Math.toRadians(180+180), Math.toRadians(310-90))
                     .build();
 
             Path10 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(52, 92-2).mirror(), new Pose(41.000, 40.500-2).mirror())
+                            new BezierLine(new Pose(56, 90-2).mirror(), new Pose(41.000, 40.500-2).mirror())
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(317-90), Math.toRadians(180+180))
+                    .setLinearHeadingInterpolation(Math.toRadians(310-90), Math.toRadians(180+180))
                     .build();
 
             Path11 = follower
